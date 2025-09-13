@@ -1,0 +1,18 @@
+/* 
+  InfoPlist.strings
+  ChargeEight
+
+  Created by ycx on 2022/8/16.
+  
+*/
+NSLocationAlwaysAndWhenInUseUsageDescription = "需要地理位置信息获取周边的充电宝相关数据，是否允许使用定位？";
+NSLocationAlwaysUsageDescription = "需要地理位置信息获取周边的充电宝相关数据，是否允许使用定位？";
+NSLocationWhenInUseUsageDescription = "需要地理位置信息获取周边的充电宝相关数据，是否允许使用定位？";
+
+NSCameraUsageDescription = "请允许使用您的相机，用于拍照进行上传";
+NSPhotoLibraryAddUsageDescription = "请允许访问所有相片,以便用于访问和保存图片";
+NSPhotoLibraryUsageDescription = "请允许访问所有相片,以便用于访问和保存图片";
+
+NSMicrophoneUsageDescription = "用于拍摄短视频时访问麦克风收录视频声音";
+NSAppleMusicUsageDescription = "用于拍摄视频时来添加背景音乐";
+

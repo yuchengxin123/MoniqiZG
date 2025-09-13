@@ -1,0 +1,18 @@
+/* 
+  InfoPlist.strings
+  ChargeEight
+
+  Created by ycx on 2022/8/16.
+  
+*/
+NSLocationAlwaysAndWhenInUseUsageDescription = "Need the geographic location information to obtain the relevant data of the surrounding power pack. Is it allowed to use the location?";
+NSLocationAlwaysUsageDescription = "Need the geographic location information to obtain the relevant data of the surrounding power pack. Is it allowed to use the location?";
+NSLocationWhenInUseUsageDescription = "Need the geographic location information to obtain the relevant data of the surrounding power pack. Is it allowed to use the location?";
+
+NSCameraUsageDescription = "The camera is required to scan the QR code to obtain the device number or take a photo to upload a picture. Is it allowed to open the camera?";
+NSPhotoLibraryAddUsageDescription = "Please allow access to the photo album to upload pictures for question feedback or user avatar";
+NSPhotoLibraryUsageDescription = "Please allow access to the photo album to upload pictures for question feedback or user avatar";
+
+NSMicrophoneUsageDescription = "It is used to access the microphone to record video sounds when shooting short videos";
+NSAppleMusicUsageDescription = "Used to add background music when shooting video";
+

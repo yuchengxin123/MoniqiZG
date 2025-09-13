@@ -1,0 +1,19 @@
+# Uncomment the next line to define a global platform for your project
+source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
+platform :ios, '13.0'
+
+target 'MoniqiZG' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  # Pods for MoniqiZG
+  pod 'SnapKit', '~> 5.6.0' #自动布局
+  pod 'Kingfisher'#网络图片加载 SDWebImageSwiftUI
+  pod 'Alamofire', '5.10.0' #网络请求 功能：网络请求，支持 REST API、文件上传/下载等。
+  
+  pod 'RxSwift' #函数响应式编程 用于处理异步事件流、UI 更新、网络请求等。它帮助你以声明式的方式处理复杂的数据流和事件。
+  pod 'RxCocoa' #函数响应式编程 可考虑 Combine（Apple 原生响应式库）或 Swift Concurrency
+  pod 'RxDataSources' #RxSwift 官方维护的扩展库，用来做 TableView / CollectionView 的分组与多 section 数据绑定
+  pod 'YPImagePicker', :modular_headers => true #让YPImagePicker 关联的库 只影响自身，不影响我的代码
+  pod 'SwipeCellKit'
+#  pod 'SwiftyJSON' # 数据解析
+end

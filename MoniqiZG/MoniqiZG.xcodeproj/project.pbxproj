@@ -1,0 +1,461 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		624A955BD548C7BC897BBF68 /* Pods_MoniqiZG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E31C9D6345527AA4CD8C94BC /* Pods_MoniqiZG.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0432739E3F71855868966562 /* Pods-ChinaMerchantsBank.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChinaMerchantsBank.release.xcconfig"; path = "Target Support Files/Pods-ChinaMerchantsBank/Pods-ChinaMerchantsBank.release.xcconfig"; sourceTree = "<group>"; };
+		04484A502E377ACA0076C96A /* MoniqiZG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoniqiZG.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		50C80A1D14F029DD6F32A210 /* Pods-ChinaMerchantsBank.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChinaMerchantsBank.debug.xcconfig"; path = "Target Support Files/Pods-ChinaMerchantsBank/Pods-ChinaMerchantsBank.debug.xcconfig"; sourceTree = "<group>"; };
+		66C2A6D7BD997A5F6CBA591A /* Pods-MoniqiZG.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MoniqiZG.debug.xcconfig"; path = "Target Support Files/Pods-MoniqiZG/Pods-MoniqiZG.debug.xcconfig"; sourceTree = "<group>"; };
+		B92859085CA6A4BA7549F628 /* Pods-MoniqiZG.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MoniqiZG.release.xcconfig"; path = "Target Support Files/Pods-MoniqiZG/Pods-MoniqiZG.release.xcconfig"; sourceTree = "<group>"; };
+		E31C9D6345527AA4CD8C94BC /* Pods_MoniqiZG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MoniqiZG.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		04484AE82E3785AC0076C96A /* Exceptions for "MoniqiZG" folder in "MoniqiZG" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 04484A4F2E377ACA0076C96A /* MoniqiZG */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		04484A522E377ACA0076C96A /* MoniqiZG */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				04484AE82E3785AC0076C96A /* Exceptions for "MoniqiZG" folder in "MoniqiZG" target */,
+			);
+			path = MoniqiZG;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		04484A4D2E377ACA0076C96A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624A955BD548C7BC897BBF68 /* Pods_MoniqiZG.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04484A472E377ACA0076C96A = {
+			isa = PBXGroup;
+			children = (
+				04484A522E377ACA0076C96A /* MoniqiZG */,
+				04484A512E377ACA0076C96A /* Products */,
+				97C406095F74173C1A39FB01 /* Pods */,
+				8E8821BD1BA70DECE422C2DE /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		04484A512E377ACA0076C96A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04484A502E377ACA0076C96A /* MoniqiZG.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8E8821BD1BA70DECE422C2DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E31C9D6345527AA4CD8C94BC /* Pods_MoniqiZG.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		97C406095F74173C1A39FB01 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				50C80A1D14F029DD6F32A210 /* Pods-ChinaMerchantsBank.debug.xcconfig */,
+				0432739E3F71855868966562 /* Pods-ChinaMerchantsBank.release.xcconfig */,
+				66C2A6D7BD997A5F6CBA591A /* Pods-MoniqiZG.debug.xcconfig */,
+				B92859085CA6A4BA7549F628 /* Pods-MoniqiZG.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		04484A4F2E377ACA0076C96A /* MoniqiZG */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04484A632E377ACB0076C96A /* Build configuration list for PBXNativeTarget "MoniqiZG" */;
+			buildPhases = (
+				96AF1AE053E78F80C9988BCE /* [CP] Check Pods Manifest.lock */,
+				04484A4C2E377ACA0076C96A /* Sources */,
+				04484A4D2E377ACA0076C96A /* Frameworks */,
+				04484A4E2E377ACA0076C96A /* Resources */,
+				DCF32CD75B4F48B771DF061B /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				04484A522E377ACA0076C96A /* MoniqiZG */,
+			);
+			name = MoniqiZG;
+			productName = ChinaMerchantsBank;
+			productReference = 04484A502E377ACA0076C96A /* MoniqiZG.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		04484A482E377ACA0076C96A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					04484A4F2E377ACA0076C96A = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = 04484A4B2E377ACA0076C96A /* Build configuration list for PBXProject "MoniqiZG" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 04484A472E377ACA0076C96A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 04484A512E377ACA0076C96A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				04484A4F2E377ACA0076C96A /* MoniqiZG */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		04484A4E2E377ACA0076C96A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		96AF1AE053E78F80C9988BCE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MoniqiZG-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DCF32CD75B4F48B771DF061B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoniqiZG/Pods-MoniqiZG-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoniqiZG/Pods-MoniqiZG-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MoniqiZG/Pods-MoniqiZG-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04484A4C2E377ACA0076C96A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		04484A642E377ACB0076C96A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 66C2A6D7BD997A5F6CBA591A /* Pods-MoniqiZG.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MoniqiZG/MoniqiZG.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Sahil Kumar (W4W9Z3M9C7)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 98GS7CF22M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoniqiZG/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "中国银行";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要摄像头来拍摄照片，是否允许打开摄像头？";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "需要使用面容ID来验证您的身份";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要添加图片并存储图片，是否允许打开相册？";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "请允许访问所有相片,以便用于访问和保存图片";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zg.moni.china;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.zg.moni.china.dev;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		04484A652E377ACB0076C96A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B92859085CA6A4BA7549F628 /* Pods-MoniqiZG.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MoniqiZG/MoniqiZG.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sahil Kumar (98GS7CF22M)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 98GS7CF22M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoniqiZG/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "中国银行";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要摄像头来拍摄照片，是否允许打开摄像头？";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "需要使用面容ID来验证您的身份";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要地理位置信息获取周边的银行，是否允许使用定位？";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要添加图片并存储图片，是否允许打开相册？";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "请允许访问所有相片,以便用于访问和保存图片";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zg.moni.china;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = com.zs.moni.china.adhoc;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.zg.moni.china.dis.cm;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		04484A662E377ACB0076C96A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9PV4GFHRVL;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		04484A672E377ACB0076C96A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9PV4GFHRVL;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04484A4B2E377ACA0076C96A /* Build configuration list for PBXProject "MoniqiZG" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04484A662E377ACB0076C96A /* Debug */,
+				04484A672E377ACB0076C96A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04484A632E377ACB0076C96A /* Build configuration list for PBXNativeTarget "MoniqiZG" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04484A642E377ACB0076C96A /* Debug */,
+				04484A652E377ACB0076C96A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 04484A482E377ACA0076C96A /* Project object */;
+}
