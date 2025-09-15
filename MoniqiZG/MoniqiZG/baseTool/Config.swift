@@ -153,7 +153,7 @@ let tabbar_Color:UIColor = HXColor(0xfaf9fa)
 
 let Main_LineColor:UIColor = HXColor(0xe5e5e5)
 
-let Main_Color:UIColor = HXColor(0xe84a55)
+let Main_Color:UIColor = HXColor(0xdc0336)
 
 let Main_detailColor:UIColor = HXColor(0x666666)
 

@@ -16,12 +16,11 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
     let tabbar:UIView = UIView()
     let fieldView:UIView = UIView()
     
-    var scanimg:UIImageView?
-    var searchimg:UIImageView?
+    var loginimg:UIImageView?
     var serviceimg:UIImageView?
     var msgimg:UIImageView?
-    
-    let titlePage = TextPageView()
+    var versionimg:UIImageView?
+    var faceView:FaceRecognitionView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +30,16 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
         self.addTopView()
     }
     
+    @objc override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if faceCheck == true {
+            // 未登录
+            loginimg?.image = UIImage(named: "head_login1")?.withRenderingMode(.alwaysTemplate)
+        }else{
+            //登录
+            loginimg?.image = UIImage(named: "head_exit1")?.withRenderingMode(.alwaysTemplate)
+        }
+    }
     
     //MARK: - 首页 第一次延迟展示水印 等广告结束
     override func isShowWater(){
@@ -121,21 +130,20 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
         tabbar.backgroundColor = .white.withAlphaComponent(min(max(progress, 0), 1))
         
         if progress >= 1 {
-            titlePage.changeTextColor(Main_TextColor.withAlphaComponent(0.2))
-            fieldView.layer.borderColor = Main_TextColor.withAlphaComponent(0.2).cgColor
+            fieldView.backgroundColor = Main_backgroundColor
             
-            searchimg!.tintColor = Main_TextColor.withAlphaComponent(0.2)
             serviceimg!.tintColor = Main_TextColor
             msgimg!.tintColor = Main_TextColor
-            scanimg!.tintColor = Main_TextColor
+            loginimg!.tintColor = Main_TextColor
+            versionimg!.tintColor = Main_TextColor
         }else{
-            titlePage.changeTextColor(.white)
-            fieldView.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
             
-            searchimg!.tintColor = .white
             serviceimg!.tintColor = .white
             msgimg!.tintColor = .white
-            scanimg!.tintColor = .white
+            loginimg!.tintColor = .white
+            versionimg!.tintColor = .white
+            
+            fieldView.backgroundColor = .white
         }
     }
     
@@ -148,70 +156,90 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
             make.height.equalTo(navigationHeight)
         }
         
-        tabbar.addSubview(fieldView)
+        loginimg = UIImageView(image: UIImage(named: "head_login1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(loginimg!)
+        loginimg!.tintColor = .white
+        loginimg!.isUserInteractionEnabled = true
         
-        fieldView.addSubview(titlePage)
-        fieldView.snp.makeConstraints { make in
-            make.height.equalTo(34)
-            make.width.equalTo(SCREEN_WDITH - 170)
-            make.bottom.equalToSuperview().offset(-5)
-            make.left.equalToSuperview().offset(55)
+        loginimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.left.equalToSuperview().offset(5)
+            make.bottom.equalToSuperview()
         }
         
-        searchimg = UIImageView(image: UIImage(named: "main_search")?.withRenderingMode(.alwaysTemplate))
-        fieldView.addSubview(searchimg!)
-        searchimg!.tintColor = .white
-        
-        searchimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-            make.left.equalToSuperview().offset(10)
-            make.top.equalToSuperview().inset(8)
-        }
-
-        scanimg = UIImageView(image: UIImage(named: "main_scan")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(scanimg!)
-        scanimg!.tintColor = .white
-        
-        scanimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.left.equalToSuperview().offset(15)
-            make.centerY.equalTo(fieldView)
-        }
-        
-        msgimg = UIImageView(image: UIImage(named: "main_msg_balck")?.withRenderingMode(.alwaysTemplate))
+        msgimg = UIImageView(image: UIImage(named: "head_msg1")?.withRenderingMode(.alwaysTemplate))
         tabbar.addSubview(msgimg!)
         msgimg!.tintColor = .white
         
         msgimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.right.equalToSuperview().offset(-15)
-            make.centerY.equalTo(fieldView)
+            make.height.width.equalTo(44)
+            make.right.equalToSuperview().offset(-5)
+            make.centerY.equalTo(loginimg!)
         }
         
-        serviceimg = UIImageView(image: UIImage(named: "main_kehu")?.withRenderingMode(.alwaysTemplate))
+        serviceimg = UIImageView(image: UIImage(named: "head_kf1")?.withRenderingMode(.alwaysTemplate))
         tabbar.addSubview(serviceimg!)
         serviceimg!.tintColor = .white
         
         serviceimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.right.equalTo(msgimg!.snp.left).offset(-20)
-            make.centerY.equalTo(fieldView)
+            make.height.width.equalTo(44)
+            make.right.equalTo(msgimg!.snp.left).offset(-3)
+            make.centerY.equalTo(loginimg!)
         }
         
-        let titles:Array<String> = ["银证转账","数币开通有礼"]
+        versionimg = UIImageView(image: UIImage(named: "head_version1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(versionimg!)
+        versionimg!.tintColor = .white
         
-        titlePage.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(searchimg!.snp.right).offset(10)
-            make.right.equalToSuperview().offset(-20)
+        versionimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.right.equalTo(serviceimg!.snp.left).offset(-3)
+            make.centerY.equalTo(loginimg!)
+        }
+        
+        tabbar.addSubview(fieldView)
+        fieldView.backgroundColor = .white
+   
+        fieldView.snp.makeConstraints { make in
+            make.height.equalTo(34)
+            make.right.equalTo(versionimg!.snp.left).offset(-5)
+            make.centerY.equalTo(loginimg!)
+            make.left.equalToSuperview().inset(52)
+        }
+        
+        
+        let searchimg:UIImageView = UIImageView(image: UIImage(named: "head_search"))
+        fieldView.addSubview(searchimg)
+        
+        searchimg.snp.makeConstraints { make in
+            make.height.width.equalTo(16)
+            make.left.equalToSuperview().inset(10)
+            make.top.equalToSuperview().inset(9)
         }
 
-        self.view.layoutIfNeeded()
+        let soundimg:UIImageView = UIImageView(image: UIImage(named: "head_sound"))
+        fieldView.addSubview(soundimg)
         
-        titlePage.configure(with: titles)
+        soundimg.snp.makeConstraints { make in
+            make.width.equalTo(16)
+            make.height.equalTo(22)
+            make.right.equalToSuperview().inset(10)
+            make.centerY.equalTo(searchimg)
+        }
         
-        ViewBorderRadius(fieldView, 17, 0.8, UIColor.white.withAlphaComponent(0.2))
+        let fieldlb:UILabel = creatLabel(CGRect.zero, "超值大赢家", fontRegular(14), Main_TextColor)
+        fieldView.addSubview(fieldlb)
+        
+        fieldlb.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.left.equalTo(searchimg.snp.right).offset(10)
+            make.centerY.equalTo(searchimg)
+        }
+        
+        ViewRadius(fieldView, 17)
+        
+        let tap:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFacelogin))
+        loginimg?.addGestureRecognizer(tap)
     }
     
     func addView(){
@@ -462,6 +490,31 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
 //            make.width.equalTo(SCREEN_WDITH/5.0)
 //            make.height.equalTo(80)
 //        }
+    }
+    
+    @objc func showFacelogin(){
+        //人脸识别
+        if faceCheck {
+            faceView = FaceRecognitionView.init(frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH - tabBarHeight))
+            faceView?.ctrl = self
+            faceView?.faceRecognitionSuccess = { [weak self] in
+                
+                faceCheck = false
+                
+                self?.faceView?.removeFromSuperview()
+                
+                self?.loginimg!.image = UIImage(named: "head_exit1")?.withRenderingMode(.alwaysTemplate)
+            }
+            self.view.addSubview(faceView!)
+
+            faceView!.authenticateWithFaceID()
+        }else{
+            //退出登录 需要弹框
+            
+            
+            
+            self.loginimg!.image = UIImage(named: "head_login1")?.withRenderingMode(.alwaysTemplate)
+        }
     }
     
     

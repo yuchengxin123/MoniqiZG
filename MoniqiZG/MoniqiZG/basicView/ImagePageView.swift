@@ -15,7 +15,7 @@ class ImagePageView: UIView, UIScrollViewDelegate {
     private var timer: Timer?
     private var index: Int = 1
     
-    var autoScrollInterval: TimeInterval = 5.0
+    var autoScrollInterval: TimeInterval = 4.0
 
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -15,12 +15,7 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
     let tabbar:UIView = UIView()
     let fieldView:UIView = UIView()
     
-    var scanimg:UIImageView?
-    var searchimg:UIImageView?
     var serviceimg:UIImageView?
-    var msgimg:UIImageView?
-    
-    let titlePage = TextPageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,70 +42,55 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
             make.height.equalTo(navigationHeight)
         }
         
-        tabbar.addSubview(fieldView)
-        
-        fieldView.addSubview(titlePage)
-        fieldView.snp.makeConstraints { make in
-            make.height.equalTo(34)
-            make.width.equalTo(SCREEN_WDITH - 170)
-            make.bottom.equalToSuperview().offset(-5)
-            make.left.equalToSuperview().offset(55)
-        }
-        
-        searchimg = UIImageView(image: UIImage(named: "main_search")?.withRenderingMode(.alwaysTemplate))
-        fieldView.addSubview(searchimg!)
-        searchimg!.tintColor = .black
-        
-        searchimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-            make.left.equalToSuperview().offset(10)
-            make.top.equalToSuperview().inset(8)
-        }
-
-        scanimg = UIImageView(image: UIImage(named: "main_scan")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(scanimg!)
-        scanimg!.tintColor = .black
-        
-        scanimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.left.equalToSuperview().offset(15)
-            make.centerY.equalTo(fieldView)
-        }
-        
-        msgimg = UIImageView(image: UIImage(named: "main_msg_balck")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(msgimg!)
-        msgimg!.tintColor = .black
-        
-        msgimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.right.equalToSuperview().offset(-15)
-            make.centerY.equalTo(fieldView)
-        }
-        
-        serviceimg = UIImageView(image: UIImage(named: "main_kehu")?.withRenderingMode(.alwaysTemplate))
+        serviceimg = UIImageView(image: UIImage(named: "head_kf1")?.withRenderingMode(.alwaysTemplate))
         tabbar.addSubview(serviceimg!)
         serviceimg!.tintColor = .black
         
         serviceimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.right.equalTo(msgimg!.snp.left).offset(-20)
-            make.centerY.equalTo(fieldView)
+            make.height.width.equalTo(44)
+            make.right.equalToSuperview().offset(-5)
+            make.bottom.equalToSuperview()
         }
         
-        let titles:Array<String> = ["银证转账","数币开通有礼"]
+        tabbar.addSubview(fieldView)
+        fieldView.backgroundColor = Main_backgroundColor
+   
+        fieldView.snp.makeConstraints { make in
+            make.height.equalTo(34)
+            make.right.equalTo(serviceimg!.snp.left).offset(-5)
+            make.centerY.equalTo(serviceimg!)
+            make.left.equalToSuperview().inset(15)
+        }
         
-        titlePage.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(searchimg!.snp.right).offset(10)
-            make.right.equalToSuperview().offset(-20)
+        let searchimg:UIImageView = UIImageView(image: UIImage(named: "head_search"))
+        fieldView.addSubview(searchimg)
+        
+        searchimg.snp.makeConstraints { make in
+            make.height.width.equalTo(16)
+            make.left.equalToSuperview().inset(10)
+            make.top.equalToSuperview().inset(9)
         }
 
-        self.view.layoutIfNeeded()
+        let soundimg:UIImageView = UIImageView(image: UIImage(named: "head_sound"))
+        fieldView.addSubview(soundimg)
         
-        titlePage.configure(with: titles)
+        soundimg.snp.makeConstraints { make in
+            make.width.equalTo(16)
+            make.height.equalTo(22)
+            make.right.equalToSuperview().inset(10)
+            make.centerY.equalTo(searchimg)
+        }
         
-        ViewBorderRadius(fieldView, 17, 0.8, UIColor.white.withAlphaComponent(0.2))
+        let fieldlb:UILabel = creatLabel(CGRect.zero, "超值大赢家", fontRegular(14), Main_TextColor)
+        fieldView.addSubview(fieldlb)
+        
+        fieldlb.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.left.equalTo(searchimg.snp.right).offset(10)
+            make.centerY.equalTo(searchimg)
+        }
+        
+        ViewRadius(fieldView, 17)
     }
     
     func addView(){
