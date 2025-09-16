@@ -20,7 +20,6 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
     var serviceimg:UIImageView?
     var msgimg:UIImageView?
     var versionimg:UIImageView?
-    var faceView:FaceRecognitionView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -251,10 +250,12 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
         let time:Int = Int(getCurrentTimeString(dateFormat: "dd")) ?? 0
         
         switch time {
-        case 1..<16:
+        case 1..<10:
             iconStr = "main_head_1"
-        case 16..<30:
+        case 10..<20:
             iconStr = "main_head_2"
+        case 20..<30:
+            iconStr = "main_head_3"
         default:
             iconStr = "main_head_1"
         }
@@ -495,23 +496,18 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
     @objc func showFacelogin(){
         //人脸识别
         if faceCheck {
-            faceView = FaceRecognitionView.init(frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH - tabBarHeight))
-            faceView?.ctrl = self
-            faceView?.faceRecognitionSuccess = { [weak self] in
-                
+            let ctrl:FaceRecognitionCtrl = FaceRecognitionCtrl()
+            ctrl.faceRecognitionSuccess = { [weak self] in
                 faceCheck = false
-                
-                self?.faceView?.removeFromSuperview()
-                
                 self?.loginimg!.image = UIImage(named: "head_exit1")?.withRenderingMode(.alwaysTemplate)
             }
-            self.view.addSubview(faceView!)
+            self.navigationController?.pushViewController(ctrl, animated: true)
 
-            faceView!.authenticateWithFaceID()
+            ctrl.authenticateWithFaceID()
         }else{
             //退出登录 需要弹框
             
-            
+            faceCheck = true
             
             self.loginimg!.image = UIImage(named: "head_login1")?.withRenderingMode(.alwaysTemplate)
         }

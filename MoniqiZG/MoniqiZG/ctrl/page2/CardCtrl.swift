@@ -14,7 +14,7 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
     private var didSetupCorner = false
     let tabbar:UIView = UIView()
     let fieldView:UIView = UIView()
-    
+    var headImage:UIImageView = UIImageView()
     var serviceimg:UIImageView?
     
     override func viewDidLoad() {
@@ -25,11 +25,43 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
         self.addTopView()
     }
     
+    @objc override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let image:UIImage = UIImage(named: (faceCheck == true) ? "card_head_nologin":"card_head_login") ?? UIImage()
+        
+        let high:CGFloat = SCREEN_WDITH * (image.size.height/image.size.width)
+        headImage.image = image
+        headImage.snp.updateConstraints { make in
+            make.height.equalTo(high)
+        }
+    }
     
     override func setupUI() {
         super.setupUI()
         // 原来写在 viewDidLoad 的 UI 代码，挪到这里
         self.addView()
+    }
+    
+    @objc func showFacelogin(){
+        //人脸识别
+        if faceCheck {
+            let ctrl = FaceRecognitionCtrl()
+            ctrl.faceRecognitionSuccess = { [weak self] in
+                faceCheck = false
+                
+                let image:UIImage = UIImage(named: (faceCheck == true) ? "card_head_nologin":"card_head_login") ?? UIImage()
+                
+                let high:CGFloat = SCREEN_WDITH * (image.size.height/image.size.width)
+                self?.headImage.image = image
+                self?.headImage.snp.updateConstraints { make in
+                    make.height.equalTo(high)
+                }
+            }
+            self.navigationController?.pushViewController(ctrl, animated: true)
+
+            ctrl.authenticateWithFaceID()
+        }
     }
     
     
@@ -94,9 +126,25 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
     }
     
     func addView(){
-        var y:CGFloat = navigationHeight
+        var y:CGFloat = 0
         
-        let headimgs:Array<String> = ["card_head","card_btns","card_banner_title"]
+        let image:UIImage = UIImage(named: "card_head_nologin") ?? UIImage()
+        
+        let high:CGFloat = SCREEN_WDITH * (image.size.height/image.size.width)
+        headImage.image = image
+        headImage.isUserInteractionEnabled = true
+        contentView.addSubview(headImage)
+        
+        headImage.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalToSuperview().offset(navigationHeight)
+            make.height.equalTo(high)
+        }
+        
+        let tap:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFacelogin))
+        headImage.addGestureRecognizer(tap)
+        
+        let headimgs:Array<String> = ["card_btns","card_banner_title"]
         
         for (i, icon) in headimgs.enumerated() {
             let image:UIImage = UIImage(named: icon) ?? UIImage()
@@ -104,15 +152,14 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
             let imageV:UIImageView = UIImageView()
             imageV.image = image
             
-            let high:CGFloat = (i==2 ? (SCREEN_WDITH - 30) : SCREEN_WDITH) * (image.size.height/image.size.width)
+            let high:CGFloat = (i==1 ? (SCREEN_WDITH - 30) : SCREEN_WDITH) * (image.size.height/image.size.width)
             contentView.addSubview(imageV)
             
             imageV.snp.makeConstraints { make in
-                make.left.right.equalToSuperview().inset(i==2 ? 15:0)
-                make.top.equalToSuperview().offset(y)
+                make.left.right.equalToSuperview().inset(i==1 ? 15:0)
+                make.top.equalTo(headImage.snp.bottom).offset(y)
                 make.height.equalTo(high)
             }
-            
             y+=high
         }
         
@@ -127,7 +174,7 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
         
         carousel.snp.makeConstraints { make in
             make.height.equalTo(carouselhigh)
-            make.top.equalToSuperview().offset(y + 8)
+            make.top.equalTo(headImage.snp.bottom).offset(y + 8)
             make.left.right.equalToSuperview().inset(15)
         }
         
@@ -161,7 +208,7 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
             
             titlelb.snp.makeConstraints { make in
                 make.left.equalToSuperview().inset(15)
-                make.top.equalToSuperview().offset(y + 4)
+                make.top.equalTo(headImage.snp.bottom).offset(y + 4)
                 make.height.equalTo(46)
             }
 
@@ -201,7 +248,7 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
         bottomView.snp.makeConstraints { make in
             make.right.left.equalToSuperview()
             make.height.equalTo(50)
-            make.top.equalToSuperview().offset(y + 20)
+            make.top.equalTo(headImage.snp.bottom).offset(y + 20)
         }
         
         contentView.snp.makeConstraints { make in

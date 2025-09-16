@@ -9,84 +9,73 @@ import UIKit
 import LocalAuthentication
 import Foundation
 
-class FaceRecognitionView: UIView {
+class FaceRecognitionCtrl: UIViewController {
     
     var faceRecognitionSuccess:(() -> Void)?
     var timelb:UILabel?
-    var ctrl:BaseCtrl?
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .white
+        self.navigationController?.navigationBar.isHidden = true
+        self.modalPresentationStyle = .fullScreen
+        
+        if #available(iOS 15.0, *) {
+            let appearance = UINavigationBarAppearance.init()
+            appearance.backgroundImage = UIImage.init()
+            appearance.backgroundColor = .white
+            appearance.shadowColor = .clear
+            self.navigationController?.navigationBar.standardAppearance = appearance
+            self.navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        }
         setupUI()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     func setupUI(){
-        self.backgroundColor = .white
         
-        let rightImage:UIImageView = UIImageView(frame: CGRect(x: SCREEN_WDITH - 35, y: navigationHeight - 22, width: 20, height: 20))
+        let leftImage:UIImageView = UIImageView(frame: CGRect(x: 15, y: navigationHeight - 24, width: 24, height: 24))
+        leftImage.image = UIImage(named: "back_blcak")
+        view.addSubview(leftImage)
+        
+        let backbtn:UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: navigationHeight, height: navigationHeight))
+        view.addSubview(backbtn)
+        backbtn.addTarget(self, action: #selector(faceback), for: .touchUpInside)
+        
+        
+        let rightImage:UIImageView = UIImageView(frame: CGRect(x: SCREEN_WDITH - 39, y: navigationHeight - 24, width: 24, height: 24))
         rightImage.image = UIImage(named: "face_right")
-        addSubview(rightImage)
+        view.addSubview(rightImage)
         
-        let userImage:UIImageView = UIImageView(frame: CGRect(x: SCREEN_WDITH/2.0 - 45, y: navigationHeight + 20, width: 90, height: 90))
+        let userImage:UIImageView = UIImageView(frame: CGRect(x: SCREEN_WDITH/2.0 - 35, y: navigationHeight + 40, width: 70, height: 70))
         userImage.image = UIImage(named: "face_default")
-        addSubview(userImage)
-        ViewRadius(userImage, 40)
+        view.addSubview(userImage)
         
-        
-        var timeStr = "上午好"
-        let now = Date()
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: now)
-
-        if hour >= 14 && hour <= 18 {
-            timeStr = "下午好"
-        } else if hour >= 11 && hour <= 14{
-            timeStr = "中午好"
-        } else if hour >= 5 && hour <= 11{
-            timeStr = "早上好"
-        }else{
-            timeStr = "晚上好"
-        }
-        
-        timelb = creatLabel(CGRect(x: 0, y: navigationHeight + 150, width: SCREEN_WDITH, height: 40), String(format: "%@，%@", myUser?.nickname ?? "",timeStr), fontRegular(25), Main_TextColor)
+        timelb = creatLabel(CGRect(x: 0, y: navigationHeight + 130, width: SCREEN_WDITH, height: 40), String(format: "%@", myUser?.phone ?? "111****1111"), fontMedium(20), Main_TextColor)
         timelb!.textAlignment = .center
-        addSubview(timelb!)
+        view.addSubview(timelb!)
         
-        let facebtn:UIButton = UIButton(frame: CGRect(x: SCREEN_WDITH/2.0 - 25, y: navigationHeight + 250, width: 50, height: 50))
+        let facebtn:UIButton = UIButton(frame: CGRect(x: SCREEN_WDITH/2.0 - 30, y: navigationHeight + 260, width: 60, height: 60))
         facebtn.setImage(UIImage(named: "face_btn"), for: .normal)
         facebtn.addTarget(self, action: #selector(authenticateWithFaceID), for: .touchUpInside)
-        addSubview(facebtn)
+        view.addSubview(facebtn)
         
-        let detaillb:UILabel = creatLabel(CGRect(x: 0, y: navigationHeight + 320, width: SCREEN_WDITH, height: 20), "点击进行面容ID登录", fontRegular(14), Main_TextColor)
+        let detaillb:UILabel = creatLabel(CGRect(x: 0, y: navigationHeight + 365, width: SCREEN_WDITH, height: 20), "点击进行人脸登录", fontRegular(15), Main_TextColor)
         detaillb.textAlignment = .center
-        addSubview(detaillb)
+        view.addSubview(detaillb)
         
-        let morelb:UILabel = creatLabel(CGRect(x: 0, y: navigationHeight + 375, width: SCREEN_WDITH, height: 25), "更多选项", fontRegular(16), Main_TextColor)
+        let morelb:UILabel = creatLabel(CGRect(x: 0, y: SCREEN_HEIGTH - bottomSafeAreaHeight - 40, width: SCREEN_WDITH, height: 25), "更多", fontRegular(14), Main_detailColor)
         morelb.textAlignment = .center
-        addSubview(morelb)
+        view.addSubview(morelb)
     }
     
+    @objc func faceback(){
+        print("退出登录")
+    }
     
     @objc func authenticateWithFaceID() {
-        var timeStr = "上午好"
-        let now = Date()
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: now)
 
-        if hour >= 14 && hour <= 18 {
-            timeStr = "下午好"
-        } else if hour >= 11 && hour <= 14{
-            timeStr = "中午好"
-        } else if hour >= 5 && hour <= 11{
-            timeStr = "早上好"
-        }else{
-            timeStr = "晚上好"
-        }
-        
-        timelb?.text = String(format: "%@，%@", myUser?.nickname ?? "",timeStr)
+        timelb?.text = String(format: "%@", myUser?.phone ?? "111****1111")
         
         let context = LAContext()
         var error: NSError?
@@ -96,15 +85,16 @@ class FaceRecognitionView: UIView {
                 DispatchQueue.main.async {
                     if success {
                         print("Face ID 验证通过")
+                        //不管成功还是失败
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            if self.faceRecognitionSuccess != nil {
+                                self.faceRecognitionSuccess?()
+                            }
+                            self.navigationController?.popViewController(animated: true)
+                        }
                     } else {
                         print("验证失败：\(authError?.localizedDescription ?? "")")
                         //请重试
-                    }
-                    //不管成功还是失败
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        if self.faceRecognitionSuccess != nil {
-                            self.faceRecognitionSuccess?()
-                        }
                     }
                 }
             }
@@ -139,7 +129,7 @@ class FaceRecognitionView: UIView {
         alert.addAction(settingsAction)
         
         // 显示 alert
-        self.ctrl?.navigationController?.present(alert, animated: true)
+        self.navigationController?.present(alert, animated: true)
     }
 
     private func openAppSettings() {

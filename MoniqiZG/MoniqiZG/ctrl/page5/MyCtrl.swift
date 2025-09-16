@@ -16,26 +16,27 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
     private var didSetupCorner = false
     
     
-    var faceView:FaceRecognitionView?
     let tabbar:UIView = UIView()
+    let fieldView:UIView = UIView()
     
-    var searchimg:UIImageView?
-    var setimg:UIImageView?
+    var loginimg:UIImageView?
+    var serviceimg:UIImageView?
     var msgimg:UIImageView?
-    var exitimg:UIImageView?
+    var versionimg:UIImageView?
     
     let headView:UIView = UIView()
     var userBtn:UIButton?//头像
     var nameBtn:UIButton?//名字
-    var dazhongBtn:UIButton?//大众
+    let manageimg:UIImageView = UIImageView()
     
+    //我的账户
+    let accountView:UIView = UIView()
+    var quanyiBtn:UIButton?//权益
     var cardsBtn:UIButton?//银行卡数
-    var daibanBtn:UIButton?//待办
-    var couponsBtn:UIButton?//银行卡数
     var pointsBtn:UIButton?//积分
-    let dazhongimg:UIImageView = UIImageView()
+    var managerlb:UIButton?//我的经理
     
-    //账户总览
+    //我的资产
     let billView:UIView = UIView()
     let showImage:UIImageView = UIImageView()
     var moneyBtn:SecureLoadingLabel = SecureLoadingLabel()
@@ -80,6 +81,12 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if faceCheck == true {
+            // 未登录情况 强制登录
+            showFacelogin()
+        }
+        
         //头像 名字
         if let avatar = loadUserImage(fileName: "usericon.png") {
             userBtn?.setImage(avatar, for: .normal)
@@ -88,59 +95,33 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         }
         nameBtn?.setTitle(String(format: "**%@", String(myUser!.myName.suffix(1))), for: .normal)
         
-        //银行卡 待办 卡券 积分
-        cardsBtn?.setTitle("\(myCardList.count)", for: .normal)
-        daibanBtn?.setTitle("\(myUser?.myWorks ?? 0)", for: .normal)
-        couponsBtn?.setTitle("\(myUser?.myCoupons ?? 0)", for: .normal)
-        pointsBtn?.setTitle(getNumberFormatter(Double(myUser?.myPoints ?? 0),0), for: .normal)
+//        //银行卡 待办 卡券 积分
+//        cardsBtn?.setTitle("\(myCardList.count)", for: .normal)
+//        daibanBtn?.setTitle("\(myUser?.myWorks ?? 0)", for: .normal)
+//        couponsBtn?.setTitle("\(myUser?.myCoupons ?? 0)", for: .normal)
+//        pointsBtn?.setTitle(getNumberFormatter(Double(myUser?.myPoints ?? 0),0), for: .normal)
+//        
+//        //账户总览
+//        moneyBtn.text = String(format: "%@¥ %@",(myUser!.isCut ? "-":""), getNumberFormatter(myUser?.myBalance ?? 0.00))
+//        incomeBtn.text = String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
+//        
+//        //本月收支
+//        expenditureMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthCost ?? 0.00))
+//        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
+//        uploadPercentageLineView()
+//        
+//        //信用卡账单
+//        creditMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.creditCardSpending ?? 0.00))
+//        creditMonthBtn.text = "\(myUser?.billingDate ?? "08-16")出账"
+//        loanMoneyBtn.text = "最高可借 \(getNumberFormatter(Double(myUser?.loanAmount ?? 0),0)) 万"
+//        //年利率 怎么算
+//        
+//        yibaoBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.medicalInsurance ?? 0.00))
+//        gongjijinBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.providentFund ?? 0.00))
+//        yuefenBtn.setTitle("\(myUser?.providentUpdateTime ?? "08-01") 余额", for: .normal)
+//        
+//        self.uploadVip()
         
-        //账户总览
-        moneyBtn.text = String(format: "%@¥ %@",(myUser!.isCut ? "-":""), getNumberFormatter(myUser?.myBalance ?? 0.00))
-        incomeBtn.text = String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
-        
-        //本月收支
-        expenditureMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthCost ?? 0.00))
-        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
-        uploadPercentageLineView()
-        
-        //信用卡账单
-        creditMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.creditCardSpending ?? 0.00))
-        creditMonthBtn.text = "\(myUser?.billingDate ?? "08-16")出账"
-        loanMoneyBtn.text = "最高可借 \(getNumberFormatter(Double(myUser?.loanAmount ?? 0),0)) 万"
-        //年利率 怎么算
-        
-        yibaoBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.medicalInsurance ?? 0.00))
-        gongjijinBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.providentFund ?? 0.00))
-        yuefenBtn.setTitle("\(myUser?.providentUpdateTime ?? "08-01") 余额", for: .normal)
-        
-        self.uploadVip()
-        
-        if faceCheck {
-            faceView = FaceRecognitionView.init(frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH - tabBarHeight))
-            faceView?.ctrl = self
-            faceView?.faceRecognitionSuccess = { [weak self] in
-                
-                faceCheck = false
-                
-                self?.faceView?.removeFromSuperview()
-
-                self?.moneyBtn.show()
-                self?.incomeBtn.show()
-
-                self?.creditMonthBtn.show()
-                self?.incomeMoneyBtn.show()
-                self?.expenditureMoneyBtn.show()
-
-                self?.creditMoneyBtn.show()
-
-                self?.yibaoBtn.show()
-                self?.gongjijinBtn.show()
-                
-            }
-            self.view.addSubview(faceView!)
-
-            faceView!.authenticateWithFaceID()
-        }
     }
     
     @objc func changeMyBalance(noti:NSNotification){
@@ -159,144 +140,174 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
     
     
     func addContentView(){
-        let bg:UIImageView = UIImageView()
-        bg.image = UIImage(named: "shequbg")
-        view.insertSubview(bg, at: 0)
+        addTopView()
         
-        bg.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+        addHeadInfoView()
         
-        self.addTopView()
-        
-        self.addHeadInfoView()
-        
-        self.addBillOverView()
-        
-        self.addMonthView()
-        
-        self.addCreditAndCardView()
-        
-        self.addProvidentFundView()
-        
-        self.addCreditAndCardView()
-        
-        self.addBottomView()
-        
-        self.cancelButtonAction()
+        addMyAccountView()
+//        self.addBillOverView()
+//        
+//        self.addMonthView()
+//        
+//        self.addCreditAndCardView()
+//        
+//        self.addProvidentFundView()
+//        
+//        self.addCreditAndCardView()
+//        
+//        self.addBottomView()
+//        
+//        self.cancelButtonAction()
     }
     
     // MARK: - 取消外面编辑
-    func cancelButtonAction(){
-        nameBtn?.isUserInteractionEnabled = false
-        
-        daibanBtn?.isUserInteractionEnabled = false
-        couponsBtn?.isUserInteractionEnabled = false
-        pointsBtn?.isUserInteractionEnabled = false
-        
-//        moneyBtn.isUserInteractionEnabled = false
-        incomeBtn.isUserInteractionEnabled = false
-        
-//        incomeMoneyBtn.isUserInteractionEnabled = false
-//        expenditureMoneyBtn.isUserInteractionEnabled = false
-        
-        creditMoneyBtn.isUserInteractionEnabled = false
-        creditMonthBtn.isUserInteractionEnabled = false
-        loanMoneyBtn.isUserInteractionEnabled = false
-        loanRateBtn.isUserInteractionEnabled = false
-        
-        yibaoBtn.isUserInteractionEnabled = false
-        gongjijinBtn.isUserInteractionEnabled = false
-        yuefenBtn.isUserInteractionEnabled = false
-    }
+//    func cancelButtonAction(){
+//        nameBtn?.isUserInteractionEnabled = false
+//        
+//        daibanBtn?.isUserInteractionEnabled = false
+//        couponsBtn?.isUserInteractionEnabled = false
+//        pointsBtn?.isUserInteractionEnabled = false
+//        
+////        moneyBtn.isUserInteractionEnabled = false
+//        incomeBtn.isUserInteractionEnabled = false
+//        
+////        incomeMoneyBtn.isUserInteractionEnabled = false
+////        expenditureMoneyBtn.isUserInteractionEnabled = false
+//        
+//        creditMoneyBtn.isUserInteractionEnabled = false
+//        creditMonthBtn.isUserInteractionEnabled = false
+//        loanMoneyBtn.isUserInteractionEnabled = false
+//        loanRateBtn.isUserInteractionEnabled = false
+//        
+//        yibaoBtn.isUserInteractionEnabled = false
+//        gongjijinBtn.isUserInteractionEnabled = false
+//        yuefenBtn.isUserInteractionEnabled = false
+//    }
     
     //导航栏
     func addTopView(){
         view.addSubview(tabbar)
-        tabbar.backgroundColor = .clear
+        tabbar.backgroundColor = .white.withAlphaComponent(0.0)
         
         tabbar.snp.makeConstraints { make in
             make.left.right.top.equalToSuperview()
             make.height.equalTo(navigationHeight)
         }
         
-        exitimg = UIImageView(image: UIImage(named: "exit")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(exitimg!)
-        exitimg!.tintColor = .black
+        loginimg = UIImageView(image: UIImage(named: "head_exit1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(loginimg!)
+        loginimg!.tintColor = .white
+        loginimg!.isUserInteractionEnabled = true
         
-        exitimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(28)
-            make.left.equalToSuperview().offset(15)
-            make.bottom.equalToSuperview().inset(7)
+        loginimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.left.equalToSuperview().offset(5)
+            make.bottom.equalToSuperview()
         }
         
-        msgimg = UIImageView(image: UIImage(named: "main_msg_balck")?.withRenderingMode(.alwaysTemplate))
+        msgimg = UIImageView(image: UIImage(named: "head_msg1")?.withRenderingMode(.alwaysTemplate))
         tabbar.addSubview(msgimg!)
-        msgimg!.tintColor = .black
+        msgimg!.tintColor = .white
         
         msgimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
-            make.right.equalToSuperview().offset(-15)
-            make.centerY.equalTo(exitimg!)
+            make.height.width.equalTo(44)
+            make.right.equalToSuperview().offset(-5)
+            make.centerY.equalTo(loginimg!)
         }
         
-        setimg = UIImageView(image: UIImage(named: "set")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(setimg!)
-        setimg!.tintColor = .black
+        serviceimg = UIImageView(image: UIImage(named: "head_kf1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(serviceimg!)
+        serviceimg!.tintColor = .white
         
-        setimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(28)
-            make.right.equalTo(msgimg!.snp.left).offset(-25)
-            make.centerY.equalTo(exitimg!)
+        serviceimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.right.equalTo(msgimg!.snp.left).offset(-3)
+            make.centerY.equalTo(loginimg!)
+        }
+        
+        versionimg = UIImageView(image: UIImage(named: "head_set1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(versionimg!)
+        versionimg!.tintColor = .white
+        
+        versionimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.right.equalTo(serviceimg!.snp.left).offset(-3)
+            make.centerY.equalTo(loginimg!)
+        }
+        
+        tabbar.addSubview(fieldView)
+        fieldView.backgroundColor = .white
+   
+        fieldView.snp.makeConstraints { make in
+            make.height.equalTo(34)
+            make.right.equalTo(versionimg!.snp.left).offset(-5)
+            make.centerY.equalTo(loginimg!)
+            make.left.equalToSuperview().inset(52)
+        }
+        
+        
+        let searchimg:UIImageView = UIImageView(image: UIImage(named: "head_search"))
+        fieldView.addSubview(searchimg)
+        
+        searchimg.snp.makeConstraints { make in
+            make.height.width.equalTo(16)
+            make.left.equalToSuperview().inset(10)
+            make.top.equalToSuperview().inset(9)
         }
 
-        searchimg = UIImageView(image: UIImage(named: "main_search")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(searchimg!)
-        searchimg!.tintColor = .black
+        let soundimg:UIImageView = UIImageView(image: UIImage(named: "head_sound"))
+        fieldView.addSubview(soundimg)
         
-        searchimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(26)
-            make.right.equalTo(setimg!.snp.left).offset(-25)
-            make.centerY.equalTo(exitimg!)
+        soundimg.snp.makeConstraints { make in
+            make.width.equalTo(16)
+            make.height.equalTo(22)
+            make.right.equalToSuperview().inset(10)
+            make.centerY.equalTo(searchimg)
         }
         
-        let btn:UIButton = UIButton()
-        btn.addTarget(self, action: #selector(setVip), for: .touchUpInside)
-        tabbar.addSubview(btn)
+        let fieldlb:UILabel = creatLabel(CGRect.zero, "超值大赢家", fontRegular(14), Main_TextColor)
+        fieldView.addSubview(fieldlb)
         
-        btn.snp.makeConstraints { make in
-            make.width.height.equalTo(50)
-            make.centerX.bottom.equalTo(setimg!)
+        fieldlb.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.left.equalTo(searchimg.snp.right).offset(10)
+            make.centerY.equalTo(searchimg)
         }
         
-        let rightBtn:UIButton = UIButton()
-        rightBtn.addTarget(self, action: #selector(setInfo), for: .touchUpInside)
-        tabbar.addSubview(rightBtn)
+        ViewRadius(fieldView, 17)
         
-        rightBtn.snp.makeConstraints { make in
-            make.width.height.equalTo(50)
-            make.centerX.bottom.equalTo(msgimg!)
-        }
+        let tap:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFacelogin))
+        loginimg?.addGestureRecognizer(tap)
     }
     
-    func uploadVip(){
-        switch Int(myUser!.myBalance) {
-        case 0...50000:
-            dazhongimg.image = UIImage(named: "icon_m_vip_1")
-        case 50000...500000:
-            dazhongimg.image = UIImage(named: "icon_m_vip_2")
-        case 500000...10000000:
-            dazhongimg.image = UIImage(named: "icon_m_vip_3")
-        default:
-            dazhongimg.image = UIImage(named: "icon_m_vip_4")
-            break
+    @objc func showFacelogin(){
+        //人脸识别
+        let ctrl = FaceRecognitionCtrl()
+        ctrl.faceRecognitionSuccess = { [weak self] in
+            faceCheck = false
+            
+            self?.moneyBtn.show()
+            self?.incomeBtn.show()
+
+            self?.creditMonthBtn.show()
+            self?.incomeMoneyBtn.show()
+            self?.expenditureMoneyBtn.show()
+
+            self?.creditMoneyBtn.show()
+
+            self?.yibaoBtn.show()
+            self?.gongjijinBtn.show()
         }
+        self.navigationController?.pushViewController(ctrl, animated: true)
+
+        ctrl.authenticateWithFaceID()
     }
+    
     
     //用户信息
     func addHeadInfoView(){
-        headView.backgroundColor = .clear
-        contentView.addSubview(headView)
+        headView.backgroundColor = Main_Color
+        contentView.insertSubview(headView, at: 0)
         
         userBtn = UIButton()
         userBtn?.imageView?.contentMode = .scaleAspectFill
@@ -309,152 +320,199 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
             userBtn?.setImage(UIImage(named: "user_default"), for: .normal)
         }
         
-        nameBtn = creatButton(CGRect.zero, String(format: "**%@", String(myUser!.myName.suffix(1))), fontMedium(20), Main_TextColor, .clear, self, #selector(changeName))
+        var timeStr = "上午好"
+        let now = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: now)
+
+        if hour >= 14 && hour <= 18 {
+            timeStr = "下午好"
+        } else if hour >= 11 && hour <= 14{
+            timeStr = "中午好"
+        } else if hour >= 5 && hour <= 11{
+            timeStr = "早上好"
+        }else{
+            timeStr = "晚上好"
+        }
+        
+        nameBtn = creatButton(CGRect.zero, String(format: "%@，**%@",timeStr, String(myUser!.myName.suffix(1))), fontSemibold(18), .white, .clear, self, #selector(changeName))
         headView.addSubview(nameBtn!)
         
+        let time:String = getCurrentTimeString(dateFormat: "yyyy/MM/dd HH:mm:ss")
+        
         let infolb:UILabel = UILabel()
-        infolb.font = fontRegular(12)
-        infolb.text = "个人主页"
-        infolb.textColor = HXColor(0x565656)
+        infolb.font = fontRegular(10)
+        infolb.text = "上次登录:\(time)"
+        infolb.textColor = .white
         headView.addSubview(infolb)
         
-        let rightimg = UIImageView()
-        rightimg.image = UIImage(named: "my_right")
-        headView.addSubview(rightimg)
+        let licaiimg:UIImage = UIImage(named: "my_manage") ?? UIImage()
+        let high:CGFloat = SCREEN_WDITH * (licaiimg.size.height/licaiimg.size.width)
         
-        dazhongBtn = UIButton()
-        dazhongBtn?.setBackgroundImage(UIImage(named: "dazhongbg"), for: .normal)
-        dazhongBtn?.addTarget(self, action: #selector(setVipRank), for: .touchUpInside)
-        headView.addSubview(dazhongBtn!)
-        
-        dazhongimg.image = UIImage(named: "icon_m_vip_1")
-        dazhongimg.contentMode = .scaleAspectFit
-        dazhongBtn!.addSubview(dazhongimg)
+        manageimg.image = licaiimg
+        contentView.addSubview(manageimg)
 
-        let wide:CGFloat = (SCREEN_WDITH - 30)/4.0
-        
-        cardsBtn = creatButton(CGRect.zero, "\(myCardList.count)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCards))
-        headView.addSubview(cardsBtn!)
-        
-        daibanBtn = creatButton(CGRect.zero, "\(myUser?.myWorks ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setDaiban))
-        headView.addSubview(daibanBtn!)
-        
-        couponsBtn = creatButton(CGRect.zero, "\(myUser?.myCoupons ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCoupons))
-        headView.addSubview(couponsBtn!)
-        
-        pointsBtn = creatButton(CGRect.zero, getNumberFormatter(Double(myUser?.myPoints ?? 0),0), fontNumber(20), Main_TextColor, .clear, self, #selector(setPoints))
-        headView.addSubview(pointsBtn!)
-        
-        let cardslb = creatLabel(CGRect.zero, "银行卡", fontRegular(12), HXColor(0x565656))
-        cardslb.textAlignment = .center
-        headView.addSubview(cardslb)
-        
-        let daibanlb = creatLabel(CGRect.zero, "待办", fontRegular(12), HXColor(0x565656))
-        daibanlb.textAlignment = .center
-        headView.addSubview(daibanlb)
-        
-        let couponlb = creatLabel(CGRect.zero, "卡券", fontRegular(12), HXColor(0x565656))
-        couponlb.textAlignment = .center
-        headView.addSubview(couponlb)
-        
-        let pointlb = creatLabel(CGRect.zero, "积分", fontRegular(12), HXColor(0x565656))
-        pointlb.textAlignment = .center
-        headView.addSubview(pointlb)
         
         headView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.top.equalToSuperview().offset(navigationHeight)
-            make.height.equalTo(150)
+            make.top.equalToSuperview()
+            make.height.equalTo(160 + navigationHeight)
         }
        
         userBtn?.snp.makeConstraints { make in
-            make.height.width.equalTo(50)
-            make.left.equalToSuperview().offset(15)
-            make.top.equalToSuperview().offset(20)
+            make.height.width.equalTo(60)
+            make.left.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(20 + navigationHeight)
         }
         
         nameBtn?.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.equalTo(20)
             make.left.equalTo(userBtn!.snp.right).offset(15)
-            make.top.equalTo(userBtn!)
+            make.top.equalTo(userBtn!).offset(10)
         }
         
         infolb.snp.makeConstraints { make in
             make.height.equalTo(20)
             make.left.equalTo(nameBtn!)
-            make.bottom.equalTo(userBtn!.snp.bottom)
+            make.top.equalTo(nameBtn!.snp.bottom).offset(2)
         }
         
-        rightimg.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.width.equalTo(20)
-            make.left.equalTo(infolb.snp.right)
-            make.centerY.equalTo(infolb)
+        manageimg.snp.makeConstraints { make in
+            make.height.equalTo(high)
+            make.left.right.equalToSuperview()
+            make.top.equalTo(headView.snp.bottom).offset(-50)
+        }
+        ViewRadius(userBtn!, 30)
+    }
+    //我的账户
+    func addMyAccountView(){
+//        let accountView:UIView = UIView()
+//        var quanyiBtn:UIButton?//权益
+//        var cardsBtn:UIButton?//银行卡数
+//        var pointsBtn:UIButton?//积分
+//        var managerlb:UIButton?//我的经理
+        let img:UIImage = UIImage(named: "my_daiban") ?? UIImage()
+        let high:CGFloat = img.size.height/img.size.width * SCREEN_WDITH
+        
+        let daibanImg:UIImageView = UIImageView()
+        daibanImg.image = img
+        contentView.addSubview(daibanImg)
+        
+        daibanImg.snp.makeConstraints { make in
+            make.height.equalTo(high)
+            make.left.right.equalToSuperview()
+            make.top.equalTo(manageimg.snp.bottom)
         }
         
-        dazhongBtn!.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.width.equalTo(90)
-            make.right.equalToSuperview().offset(-20)
-            make.bottom.equalTo(userBtn!)
+        contentView.addSubview(accountView)
+        
+        accountView.snp.makeConstraints { make in
+            make.height.equalTo(150)
+            make.left.right.equalToSuperview().inset(15)
+            make.top.equalTo(daibanImg.snp.bottom).offset(10)
         }
         
-        //288 87
-        dazhongimg.snp.makeConstraints { make in
-            make.height.equalTo(15)
-//            make.width.equalTo(90)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-5)
+        let titles:Array<String> = ["\(myUser!.myCards)","\(myUser!.myWorks)","",""]
+        let details:Array<String> = ["我的账户","我的权益","我的积分","我的游戏"]
+        let wide:CGFloat = (SCREEN_WDITH - 30)/4.0
+        
+        for (i,str) in details.enumerated() {
+            if i <= 1 {
+                
+                
+            }else{
+                
+            }
         }
         
-        cardsBtn!.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.width.equalTo(wide)
-            make.left.equalToSuperview().offset(15)
-            make.top.equalTo(userBtn!.snp.bottom).offset(15)
-        }
         
-        daibanBtn!.snp.makeConstraints { make in
-            make.height.width.top.equalTo(cardsBtn!)
-            make.left.equalToSuperview().offset(wide + 15)
-        }
         
-        couponsBtn!.snp.makeConstraints { make in
-            make.height.width.top.equalTo(cardsBtn!)
-            make.left.equalToSuperview().offset(wide * 2.0 + 15)
-        }
+        setupViewWithRoundedCornersAndShadow(
+            accountView,
+            radius: 10.0,
+            corners: [.topLeft, .topRight , .bottomLeft,.bottomRight], // 示例: 左上+右下圆角
+            borderWidth: 0,
+            borderColor: .white,
+            shadowColor: .lightGray, // 浅灰色阴影
+            shadowRadius: 10,         // 柔和扩散效果
+            shadowOpacity: 0.2       // 浅色透明度
+        )
+//
+//        cardsBtn = creatButton(CGRect.zero, "\(myCardList.count)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCards))
+//        headView.addSubview(cardsBtn!)
+//
+//        daibanBtn = creatButton(CGRect.zero, "\(myUser?.myWorks ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setDaiban))
+//        headView.addSubview(daibanBtn!)
+//
+//        couponsBtn = creatButton(CGRect.zero, "\(myUser?.myCoupons ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCoupons))
+//        headView.addSubview(couponsBtn!)
+//
+//        pointsBtn = creatButton(CGRect.zero, getNumberFormatter(Double(myUser?.myPoints ?? 0),0), fontNumber(20), Main_TextColor, .clear, self, #selector(setPoints))
+//        headView.addSubview(pointsBtn!)
+//
+//        let cardslb = creatLabel(CGRect.zero, "银行卡", fontRegular(12), HXColor(0x565656))
+//        cardslb.textAlignment = .center
+//        headView.addSubview(cardslb)
+//
+//        let daibanlb = creatLabel(CGRect.zero, "待办", fontRegular(12), HXColor(0x565656))
+//        daibanlb.textAlignment = .center
+//        headView.addSubview(daibanlb)
+//
+//        let couponlb = creatLabel(CGRect.zero, "卡券", fontRegular(12), HXColor(0x565656))
+//        couponlb.textAlignment = .center
+//        headView.addSubview(couponlb)
+//
+//        let pointlb = creatLabel(CGRect.zero, "积分", fontRegular(12), HXColor(0x565656))
+//        pointlb.textAlignment = .center
+//        headView.addSubview(pointlb)
         
-        pointsBtn!.snp.makeConstraints { make in
-            make.height.width.top.equalTo(cardsBtn!)
-            make.left.equalToSuperview().offset(wide * 3.0 + 15)
-        }
-        
-        cardslb.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.width.equalTo(wide)
-            make.left.equalTo(cardsBtn!)
-            make.top.equalTo(cardsBtn!.snp.bottom)
-        }
-        
-        daibanlb.snp.makeConstraints { make in
-            make.width.height.top.equalTo(cardslb)
-            make.left.equalTo(daibanBtn!)
-        }
-        
-        couponlb.snp.makeConstraints { make in
-            make.width.height.top.equalTo(cardslb)
-            make.left.equalTo(couponsBtn!)
-        }
-        
-        pointlb.snp.makeConstraints { make in
-            make.width.height.top.equalTo(cardslb)
-            make.left.equalTo(pointsBtn!)
-        }
-        
-        ViewRadius(userBtn!, 25)
+        //        cardsBtn!.snp.makeConstraints { make in
+        //            make.height.equalTo(30)
+        //            make.width.equalTo(wide)
+        //            make.left.equalToSuperview().offset(15)
+        //            make.top.equalTo(userBtn!.snp.bottom).offset(15)
+        //        }
+        //
+        //        daibanBtn!.snp.makeConstraints { make in
+        //            make.height.width.top.equalTo(cardsBtn!)
+        //            make.left.equalToSuperview().offset(wide + 15)
+        //        }
+        //
+        //        couponsBtn!.snp.makeConstraints { make in
+        //            make.height.width.top.equalTo(cardsBtn!)
+        //            make.left.equalToSuperview().offset(wide * 2.0 + 15)
+        //        }
+        //
+        //        pointsBtn!.snp.makeConstraints { make in
+        //            make.height.width.top.equalTo(cardsBtn!)
+        //            make.left.equalToSuperview().offset(wide * 3.0 + 15)
+        //        }
+        //
+        //        cardslb.snp.makeConstraints { make in
+        //            make.height.equalTo(20)
+        //            make.width.equalTo(wide)
+        //            make.left.equalTo(cardsBtn!)
+        //            make.top.equalTo(cardsBtn!.snp.bottom)
+        //        }
+        //
+        //        daibanlb.snp.makeConstraints { make in
+        //            make.width.height.top.equalTo(cardslb)
+        //            make.left.equalTo(daibanBtn!)
+        //        }
+        //
+        //        couponlb.snp.makeConstraints { make in
+        //            make.width.height.top.equalTo(cardslb)
+        //            make.left.equalTo(couponsBtn!)
+        //        }
+        //
+        //        pointlb.snp.makeConstraints { make in
+        //            make.width.height.top.equalTo(cardslb)
+        //            make.left.equalTo(pointsBtn!)
+        //        }
+                
     }
     
-    //账户总览
+    //我的资产
     func addBillOverView(){
         //0xf0effc
         //MyDetailColor
@@ -1131,62 +1189,6 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
 //        }
     }
     
-    @objc func setCards(){
-        let ctrl:MyCardCtrl = MyCardCtrl()
-        ctrl.enableLazyLoad = true
-        self.navigationController?.pushViewController(ctrl, animated: true)
-    }
-    
-    @objc func setDaiban(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "待办")
-        fieldview.type = .integerType
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-            self.daibanBtn?.setTitle(text, for: .normal)
-            myUser?.myWorks = Int(text) ?? 1
-            UserManager.shared.update { user in
-                user.myWorks = Int(text) ?? 1
-            }
-        }
-    }
-    
-    @objc func setCoupons(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "卡券")
-        fieldview.type = .integerType
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-            self.couponsBtn?.setTitle(text, for: .normal)
-            myUser?.myCoupons = Int(text) ?? 1
-            UserManager.shared.update { user in
-                user.myCoupons = Int(text) ?? 1
-            }
-        }
-    }
-    
-    @objc func setPoints(){
-        print("修改我的积分数量")
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "积分")
-        fieldview.type = .integerType
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-            self.pointsBtn?.setTitle(text, for: .normal)
-            myUser?.myPoints = Int(text) ?? 0
-            UserManager.shared.update { user in
-                user.myPoints = Int(text) ?? 0
-            }
-        }
-    }
-    
-    @objc func setVipRank(){
-        print("修改我的vip等级")
-        
-    }
     
     @objc func changeContent(button:SecureLoadingLabel){
         if button == creditMonthBtn {
@@ -1341,6 +1343,23 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         let progress = min(max(offsetY / navigationHeight, 0), 1)
 
         tabbar.backgroundColor = .white.withAlphaComponent(min(max(progress, 0), 1))
+        
+        if progress >= 1 {
+            fieldView.backgroundColor = Main_backgroundColor
+            
+            serviceimg!.tintColor = Main_TextColor
+            msgimg!.tintColor = Main_TextColor
+            loginimg!.tintColor = Main_TextColor
+            versionimg!.tintColor = Main_TextColor
+        }else{
+            
+            serviceimg!.tintColor = .white
+            msgimg!.tintColor = .white
+            loginimg!.tintColor = .white
+            versionimg!.tintColor = .white
+            
+            fieldView.backgroundColor = .white
+        }
     }
     
     deinit {

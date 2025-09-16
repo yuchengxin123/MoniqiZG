@@ -14,15 +14,18 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
     let tabbar:UIView = UIView()
     let fieldView:UIView = UIView()
     
-    var locButton:UIButton?
-    var searchimg:UIImageView?
+    var locimg:UIImageView?
+    var loclb:UILabel?
     var serviceimg:UIImageView?
     var msgimg:UIImageView?
-    var titlePage:UILabel = creatLabel(CGRect.zero, "星巴克笔笔立减2元起", fontRegular(14), .white)
+    var versionimg:UIImageView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        contentView.backgroundColor = Main_backgroundColor
+        basicScrollView.delegate = self
+        basicScrollView.bounces = false
+        
+        contentView.backgroundColor = .white
         addTopView()
     }
     
@@ -32,9 +35,6 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
     }
     
     func addTopView(){
-        basicScrollView.delegate = self
-        basicScrollView.bounces = false
-        
         view.addSubview(tabbar)
         tabbar.backgroundColor = .white.withAlphaComponent(0.0)
         
@@ -42,76 +42,90 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
             make.left.right.top.equalToSuperview()
             make.height.equalTo(navigationHeight)
         }
-        tabbar.addSubview(fieldView)
         
-        fieldView.addSubview(titlePage)
-        
-        fieldView.snp.makeConstraints { make in
-            make.height.equalTo(34)
-            make.width.equalTo(SCREEN_WDITH - 195)
-            make.bottom.equalToSuperview().offset(-5)
-            make.left.equalToSuperview().offset(80)
-        }
-        
-        searchimg = UIImageView(image: UIImage(named: "main_search")?.withRenderingMode(.alwaysTemplate))
-        fieldView.addSubview(searchimg!)
-        searchimg!.tintColor = .white
-        
-        searchimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-            make.left.equalToSuperview().offset(10)
-            make.top.equalToSuperview().inset(8)
-        }
-        
-        locButton = UIButton()
-        locButton?.addTarget(self, action: #selector(changeLocation), for: .touchUpInside)
-        tabbar.addSubview(locButton!)
-        
-        locButton!.snp.makeConstraints { make in
-            make.height.equalTo(30)
-            make.width.equalTo(70)
-            make.left.equalToSuperview().offset(15)
-            make.centerY.equalTo(fieldView)
-        }
-        
-        msgimg = UIImageView(image: UIImage(named: "order")?.withRenderingMode(.alwaysTemplate))
-        tabbar.addSubview(msgimg!)
-        msgimg!.tintColor = .white
-        
-        msgimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(24)
-            make.right.equalToSuperview().offset(-15)
-            make.centerY.equalTo(fieldView)
-        }
-        
-        serviceimg = UIImageView(image: UIImage(named: "face_black")?.withRenderingMode(.alwaysTemplate))
+        serviceimg = UIImageView(image: UIImage(named: "head_kf1")?.withRenderingMode(.alwaysTemplate))
         tabbar.addSubview(serviceimg!)
         serviceimg!.tintColor = .white
         
         serviceimg!.snp.makeConstraints { make in
-            make.width.height.equalTo(24)
-            make.right.equalTo(msgimg!.snp.left).offset(-20)
-            make.centerY.equalTo(fieldView)
+            make.height.width.equalTo(44)
+            make.right.equalToSuperview().offset(-5)
+            make.bottom.equalToSuperview()
         }
         
-        titlePage.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(searchimg!.snp.right).offset(10)
-            make.right.equalToSuperview().offset(-20)
+        loclb = creatLabel(CGRect.zero, "北京", fontSemibold(10), .white)
+        loclb?.textAlignment = .center
+        tabbar.addSubview(loclb!)
+        
+        loclb!.snp.makeConstraints { make in
+            make.width.equalTo(44)
+            make.left.equalToSuperview().offset(5)
+            make.bottom.equalToSuperview().offset(-2)
+        }
+        
+        locimg = UIImageView(image: UIImage(named: "head_loc1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(locimg!)
+        locimg!.tintColor = .white
+        locimg!.isUserInteractionEnabled = true
+        
+        locimg!.snp.makeConstraints { make in
+            make.width.equalTo(18)
+            make.height.equalTo(22)
+            make.centerX.equalTo(loclb!)
+            make.bottom.equalTo(loclb!.snp.top).offset(-3)
+        }
+        
+        msgimg = UIImageView(image: UIImage(named: "head_scan1")?.withRenderingMode(.alwaysTemplate))
+        tabbar.addSubview(msgimg!)
+        msgimg!.tintColor = .white
+        
+        msgimg!.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.right.equalTo(serviceimg!.snp.left).offset(-3)
+            make.centerY.equalTo(serviceimg!)
         }
 
-        self.view.layoutIfNeeded()
+        tabbar.addSubview(fieldView)
+        fieldView.backgroundColor = .white
+   
+        fieldView.snp.makeConstraints { make in
+            make.height.equalTo(34)
+            make.right.equalTo(msgimg!.snp.left).offset(-5)
+            make.centerY.equalTo(serviceimg!)
+            make.left.equalToSuperview().inset(52)
+        }
         
-        locButton?.setImageTitleLayout(
-            image: UIImage(named: "loc_bottom_white"),
-            title: "北京",
-            font: fontRegular(16),
-            spacing: 2,
-            position: .right
-        )
-        ViewBorderRadius(fieldView, 17, 0.8, UIColor.white.withAlphaComponent(0.2))
-        locButton?.setTitleColor(.white, for: .normal)
+        
+        let searchimg:UIImageView = UIImageView(image: UIImage(named: "head_search"))
+        fieldView.addSubview(searchimg)
+        
+        searchimg.snp.makeConstraints { make in
+            make.height.width.equalTo(16)
+            make.left.equalToSuperview().inset(10)
+            make.top.equalToSuperview().inset(9)
+        }
+
+        let soundimg:UIImageView = UIImageView(image: UIImage(named: "head_sound"))
+        fieldView.addSubview(soundimg)
+        
+        soundimg.snp.makeConstraints { make in
+            make.width.equalTo(16)
+            make.height.equalTo(22)
+            make.right.equalToSuperview().inset(10)
+            make.centerY.equalTo(searchimg)
+        }
+        
+        let fieldlb:UILabel = creatLabel(CGRect.zero, "超值大赢家", fontRegular(14), Main_TextColor)
+        fieldView.addSubview(fieldlb)
+        
+        fieldlb.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.left.equalTo(searchimg.snp.right).offset(10)
+            make.centerY.equalTo(searchimg)
+        }
+        
+        ViewRadius(fieldView, 17)
+        
     }
     
     func addView(){
@@ -132,99 +146,83 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
             make.height.equalTo(20)
         }
         
+        var y:CGFloat = carouselhigh - 40
         
-        let lifeImgs:Array<String> = ["life2","life_featured_bg","life3","life_movie_bg","life4","life5","life_car_bg","life_more_1","life_more_2","life_more_3","life_more_4","life_more_5","life_more_6"]
+        var image:UIImage = UIImage(named: "life2") ?? UIImage()
+        var imageV:UIImageView = UIImageView()
+        imageV.image = image
         
-        let carImgs:Array<String> = ["car1","car2","car3"]
+        var high:CGFloat = (SCREEN_WDITH - 30) * (image.size.height/image.size.width)
+        contentView.addSubview(imageV)
         
-        let featureImgs:Array<String> = ["feature1","feature2"]
+        imageV.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(15)
+            make.top.equalTo(y)
+            make.height.equalTo(high)
+        }
+        y+=(high + 15)
         
-        var y:CGFloat = carouselhigh - 50
+        self.view.layoutIfNeeded()
         
-        for (i,img) in lifeImgs.enumerated() {
-            let img:UIImage = UIImage(named:img) ?? UIImage()
+        setupViewWithRoundedCornersAndShadow(
+            imageV,
+            radius: 10.0,
+            corners: [.topLeft, .topRight , .bottomLeft,.bottomRight], // 示例: 左上+右下圆角
+            borderWidth: 0,
+            borderColor: .white,
+            shadowColor: .lightGray, // 浅灰色阴影
+            shadowRadius: 10,         // 柔和扩散效果
+            shadowOpacity: 0.2       // 浅色透明度
+        )
+        
+        image = UIImage(named: "life3") ?? UIImage()
+        imageV = UIImageView()
+        imageV.image = image
+        
+        high = SCREEN_WDITH * (image.size.height/image.size.width)
+        contentView.addSubview(imageV)
+        
+        imageV.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalTo(y)
+            make.height.equalTo(high)
+        }
+        y+=high
+        
+        let titles:Array<String> = ["为您优选","话费充值"]
+
+        let images:Array = ["life4","life5"]
+        
+        for (i, icon) in images.enumerated() {
+            let titlelb:UILabel = creatLabel(CGRect.zero, titles[i], fontSemibold(18), Main_TextColor)
+            titlelb.textAlignment = .left
+            contentView.addSubview(titlelb)
             
-            var high:CGFloat = img.size.height/img.size.width * (SCREEN_WDITH - 30)
-            
-            if i >= 7 {
-                high = img.size.height/img.size.width * SCREEN_WDITH
-            }
+            let image:UIImage = UIImage(named: icon) ?? UIImage()
             
             let imageV:UIImageView = UIImageView()
-            imageV.image = img
+            imageV.image = image
+            
+            let high:CGFloat = (i == 0 ? (SCREEN_WDITH - 30) : SCREEN_WDITH) * (image.size.height/image.size.width)
             contentView.addSubview(imageV)
             
+            titlelb.snp.makeConstraints { make in
+                make.left.equalToSuperview().inset(15)
+                make.top.equalToSuperview().offset(y + 4)
+                make.height.equalTo(46)
+            }
+    
             imageV.snp.makeConstraints { make in
-                if( i >= 7){
-                    make.left.right.equalToSuperview()
-                    make.height.equalTo(high)
-                }else{
-                    make.left.right.equalToSuperview().inset(15)
-                    make.height.equalTo(high)
-                }
-                make.top.equalToSuperview().offset(y)
+                make.left.right.equalToSuperview().inset(15)
+                make.top.equalTo(titlelb.snp.bottom)
+                make.height.equalTo(high)
             }
             
-            if i >= 7 {
-                y = y + high
-            }else{
-                y = y + high + 15
-            }
+            y+=(high + 50)
             
-            imageV.layoutIfNeeded()
-            ViewRadius(imageV, 10)
-            
-            if i == 1 {
-                addImagePageView(imageV, featureImgs)
-            }
-            
-            if i == 3 {
-                var x:CGFloat = 5
-                let movies:Array<String> = ["movie1","movie2","movie3","movie4"]
-                imageV.isUserInteractionEnabled = true
-                
-                let scrollview = UIScrollView()
-                imageV.addSubview(scrollview)
-                
-                scrollview.snp.makeConstraints { make in
-                    make.left.equalToSuperview().offset(5)
-                    make.bottom.equalToSuperview().offset(-20)
-                    make.right.equalToSuperview()
-                    make.height.equalTo(230)
-                }
-                
-                scrollview.layoutIfNeeded()
-
-                for img in movies {
-                    let img:UIImage = UIImage(named:img) ?? UIImage()
-                    let wide:CGFloat = img.size.width/img.size.height * 230
-                    
-                    let imageV:UIImageView = UIImageView()
-                    imageV.image = img
-                    scrollview.addSubview(imageV)
-                    
-                    imageV.snp.makeConstraints { make in
-                        make.left.equalToSuperview().offset(x)
-                        make.height.equalTo(230)
-                        make.width.equalTo(wide)
-                        make.top.equalToSuperview()
-                    }
-                    
-                    x+=wide
-                }
-                scrollview.isScrollEnabled = true
-                scrollview.contentSize = CGSizeMake(x, 230)
-                scrollview.showsVerticalScrollIndicator = false
-                scrollview.showsHorizontalScrollIndicator = false
-            }
-            
-            if i == 6 {
-                addImagePageView(imageV, carImgs)
-            }
-            
-            if i == lifeImgs.count - 1 {
+            if i == titles.count - 1 {
                 contentView.snp.makeConstraints { make in
-                    make.bottom.equalTo(imageV.snp.bottom).offset(20)
+                    make.bottom.equalTo(imageV.snp.bottom).offset(50)
                 }
             }
         }
@@ -240,26 +238,7 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
         carousel.showPage(false,full: true)
         carousel.configure(with: imgs)
     }
-    
-    func addImagePageView(_ superVivw:UIView,_ imgs:Array<String>){
-        let carouselhigh:CGFloat = (SCREEN_WDITH/2.0 - 35) * (682.0/474.0)
-        
-        let carousel = ImagePageView()
-        superVivw.addSubview(carousel)
-        
-        carousel.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.top.equalToSuperview().offset(62)
-            make.height.equalTo(carouselhigh)
-            make.width.equalTo(SCREEN_WDITH/2.0 - 35)
-        }
-        carousel.layoutIfNeeded()
-        
-        carousel.showPage(true,full: true)
-        carousel.configure(with: imgs)
-    }
-    
-    
+
     @objc func changeLocation(){
         
     }
@@ -272,23 +251,20 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
         tabbar.backgroundColor = .white.withAlphaComponent(min(max(progress, 0), 1))
         
         if progress >= 1 {
-            titlePage.textColor = Main_TextColor.withAlphaComponent(0.2)
-            fieldView.layer.borderColor = Main_TextColor.withAlphaComponent(0.2).cgColor
+            fieldView.backgroundColor = Main_backgroundColor
             
-            searchimg!.tintColor = Main_TextColor.withAlphaComponent(0.2)
             serviceimg!.tintColor = Main_TextColor
             msgimg!.tintColor = Main_TextColor
-            locButton!.setTitleColor(Main_TextColor, for: .normal)
-            locButton?.setImage(UIImage(named: "loc_bottom_gray"), for: .normal)
+            locimg!.tintColor = Main_TextColor
+            loclb!.textColor = Main_TextColor
         }else{
-            titlePage.textColor = .white
-            fieldView.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
             
-            searchimg!.tintColor = .white
             serviceimg!.tintColor = .white
             msgimg!.tintColor = .white
-            locButton!.setTitleColor(.white, for: .normal)
-            locButton?.setImage(UIImage(named: "loc_bottom_white"), for: .normal)
+            locimg!.tintColor = .white
+            loclb!.textColor = .white
+            
+            fieldView.backgroundColor = .white
         }
     }
     

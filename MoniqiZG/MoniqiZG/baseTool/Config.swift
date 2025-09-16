@@ -63,10 +63,6 @@ var hotBank:[Dictionary<String,Any>] = []
 var bankList:[Dictionary<String,Any>] = []
 //我的卡片
 var myCardList:[CardModel] = []
-//我的转账伙伴
-//var myPartnerList:[TransferPartner] = []
-//我的转账记录
-//var myTransferList:[TransferModel] = []
 //我的交易记录
 var myTradeList:[TransferModel] = []
 
@@ -109,18 +105,11 @@ let lastNames =  ["伟", "芳", "娜", "敏", "丽", "强", "磊", "军", "洋",
                   "瑶", "莹", "瑾", "璇", "妍", "婕", "姝", "娴", "婉", "婵",
                   "欣妍", "紫怡", "紫璇", "云", "佳怡", "佳慧","诗", "晨", "宇",
                   "婷", "俊", "鑫", "爽", "亮", "婷", "成"]
-//默认银行卡号前缀
-//let randomCards = ["621483", "621673", "621559", "625336", "621660", "622656", "622150", "622615",
-//                   "433670", "621792", "621626", "621245", "622666", "625808", "621222", "623183"]
 
 //我的卡片
 let MyCards = "MyCards"
-//转账记录
-//let MyTransferRecord = "MyTransferRecord"
 //交易记录
 let MyTradeRecord = "MyTradeRecord"
-//我的转账伙伴
-//let MyTransferPartnerCards = "MyTransferPartnerCards"
 
 let KWindow = MoniqiZG.keyWindow
 //通知
@@ -153,7 +142,7 @@ let tabbar_Color:UIColor = HXColor(0xfaf9fa)
 
 let Main_LineColor:UIColor = HXColor(0xe5e5e5)
 
-let Main_Color:UIColor = HXColor(0xdc0336)
+let Main_Color:UIColor = HXColor(0xdf2d46)
 
 let Main_detailColor:UIColor = HXColor(0x666666)
 

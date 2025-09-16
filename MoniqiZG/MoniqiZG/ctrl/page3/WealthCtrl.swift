@@ -24,6 +24,8 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
     //账户总览
     let billView:UIImageView = UIImageView()
     let showImage:UIImageView = UIImageView()
+    let billBgView:UIImageView = UIImageView()
+    
     var moneyBtn:SecureLoadingLabel = SecureLoadingLabel()
     var incomeBtn:SecureLoadingLabel = SecureLoadingLabel()
     
@@ -42,6 +44,8 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
         
         let incomeNumber:String = String(format: "%@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
         self.incomeBtn.text = incomeNumber
+        
+        self.billBgView.isHidden = !faceCheck
     }
     
     override func setupUI() {
@@ -67,6 +71,20 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
 
         self.incomeBtn.text = number
     }
+    
+    @objc func showFacelogin(){
+        //人脸识别
+        if faceCheck {
+            let ctrl = FaceRecognitionCtrl()
+            ctrl.faceRecognitionSuccess = { [weak self] in
+                faceCheck = false
+                self?.billBgView.isHidden = true
+            }
+            self.navigationController?.pushViewController(ctrl, animated: true)
+            ctrl.authenticateWithFaceID()
+        }
+    }
+    
     
     
     func addTopView(){
@@ -157,6 +175,15 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
         }
         y+=high
         
+        billBgView.image = UIImage(named: "caifu_money_bg_login") ?? UIImage()
+        billBgView.isUserInteractionEnabled = true
+        contentView.addSubview(billBgView)
+        billBgView.snp.makeConstraints { make in
+            make.edges.equalTo(billView)
+        }
+        
+        let tap:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFacelogin))
+        billBgView.addGestureRecognizer(tap)
         
         //按钮区
         let image:UIImage = UIImage(named: "caifu_btns") ?? UIImage()
@@ -347,12 +374,12 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
         
         bottomView.snp.makeConstraints { make in
             make.right.left.equalToSuperview()
-            make.height.equalTo(100)
+            make.height.equalTo(200)
             make.top.equalToSuperview().offset(y)
         }
         
         contentView.snp.makeConstraints { make in
-            make.bottom.equalTo(bottomView.snp.bottom).offset(-50)
+            make.bottom.equalTo(bottomView.snp.bottom).offset(-150)
         }
         
         addBillContentView()
