@@ -16,10 +16,10 @@ class PercentageLine: UIView {
     private let gap: CGFloat = 5 // 中间间隙宽度
     
     // 配色
-    var leftColor: UIColor = HXColor(0xffae2f) {
+    var leftColor: UIColor = HXColor(0xcd9a53) {
         didSet { leftLine.backgroundColor = leftColor }
     }
-    var rightColor: UIColor = HXColor(0x9189e7) {
+    var rightColor: UIColor = HXColor(0xe5e5e5) {
         didSet { rightLine.backgroundColor = rightColor }
     }
     

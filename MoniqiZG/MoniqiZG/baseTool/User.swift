@@ -68,7 +68,7 @@ struct User: Codable {
     //五险一金更新时间
     var providentUpdateTime: String = "08-16"
     //手机号
-    var phone: String = ""
+    var phone: String = "13278943216"
     
     
     var token: String = ""

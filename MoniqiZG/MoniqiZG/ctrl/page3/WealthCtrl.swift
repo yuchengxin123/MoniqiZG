@@ -217,7 +217,7 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
         rightImageV.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(15)
             make.centerY.equalTo(loopView)
-            make.width.height.equalTo(22)
+            make.width.height.equalTo(14)
         }
         loopView.layoutIfNeeded()
    
@@ -301,7 +301,7 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
             rightImageV.snp.makeConstraints { make in
                 make.right.equalToSuperview().inset(15)
                 make.centerY.equalTo(titlelb)
-                make.width.height.equalTo(22)
+                make.width.height.equalTo(14)
             }
             
 
@@ -321,7 +321,7 @@ class WealthCtrl: BaseCtrl,UIScrollViewDelegate {
                 contentView.addSubview(detaillb)
                 
                 detaillb.snp.makeConstraints { make in
-                    make.right.equalTo(rightImageV.snp.left).offset(3)
+                    make.right.equalTo(rightImageV.snp.left)
                     make.centerY.equalTo(titlelb)
                 }
             }

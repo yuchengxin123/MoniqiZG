@@ -123,8 +123,8 @@ class UserEditCtrl: BaseCtrl,CustomDatePickerDelegate {
         datas.accept(myCardList)
         
         let titles:Array<String> = ["绑定手机号","头像","真实姓名","登录界面显示的昵称","总金额"]
-
-        let avatar:UIImage = loadUserImage(fileName: "usericon.png") ?? UIImage(named: "usericon")!
+//
+        let avatar:UIImage = loadUserImage(fileName: "usericon.png") ?? UIImage(named: "user_default")!
         
         let details:Array<Any> = [myUser!.phone,avatar,myUser!.myName,myUser!.nickname,getNumberFormatter(myUser?.myBalance ?? 0.00)]
         

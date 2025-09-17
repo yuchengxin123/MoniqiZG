@@ -284,6 +284,8 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
         
         var high:CGFloat = SCREEN_WDITH * (image.size.height/image.size.width)
         
+        let btnsHigh:CGFloat = high
+        
         contentView.addSubview(imageV)
         
         imageV.snp.makeConstraints { make in
@@ -406,11 +408,11 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
             rightImageV.snp.makeConstraints { make in
                 make.right.equalToSuperview().inset(15)
                 make.centerY.equalTo(titlelb)
-                make.width.height.equalTo(22)
+                make.width.height.equalTo(14)
             }
             
             detaillb.snp.makeConstraints { make in
-                make.right.equalTo(rightImageV.snp.left).offset(3)
+                make.right.equalTo(rightImageV.snp.left)
                 make.centerY.equalTo(titlelb)
             }
     
@@ -457,40 +459,51 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
             make.bottom.equalTo(bottomImg.snp.bottom)
         }
         
-//        let transferBtn:UIButton = UIButton()
-//        transferBtn.addTarget(self, action: #selector(gotoTransfer), for: .touchUpInside)
-//        contentView.addSubview(transferBtn)
-//        
-//        let amountBtn:UIButton = UIButton()
-//        amountBtn.addTarget(self, action: #selector(gotoMyAmount), for: .touchUpInside)
-//        contentView.addSubview(amountBtn)
-//        
-//        let recordBtn:UIButton = UIButton()
-//        recordBtn.addTarget(self, action: #selector(gotoRecordList), for: .touchUpInside)
-//        contentView.addSubview(recordBtn)
-//        
-//        let wide:CGFloat = SCREEN_WDITH/4.0
-//        
-//        transferBtn.snp.makeConstraints { make in
-//            make.right.equalToSuperview().offset(-wide)
-//            make.top.equalToSuperview().offset(navigationHeight)
-//            make.width.equalTo(wide)
-//            make.height.equalTo(80)
-//        }
-//        
-//        amountBtn.snp.makeConstraints { make in
-//            make.right.equalToSuperview()
-//            make.top.equalToSuperview().offset(navigationHeight)
-//            make.width.equalTo(wide)
-//            make.height.equalTo(80)
-//        }
-//        
-//        recordBtn.snp.makeConstraints { make in
-//            make.left.equalToSuperview().offset(SCREEN_WDITH/5.0)
-//            make.top.equalToSuperview().offset(randomimageHigh)
-//            make.width.equalTo(SCREEN_WDITH/5.0)
-//            make.height.equalTo(80)
-//        }
+        let transferBtn:UIButton = UIButton()
+        transferBtn.addTarget(self, action: #selector(gotoTransfer), for: .touchUpInside)
+        contentView.addSubview(transferBtn)
+        
+        let amountBtn:UIButton = UIButton()
+        amountBtn.addTarget(self, action: #selector(gotoMyAmount), for: .touchUpInside)
+        contentView.addSubview(amountBtn)
+        
+        let tradeAccountBtn:UIButton = UIButton()
+        tradeAccountBtn.addTarget(self, action: #selector(gotoTradeAccountCtrl), for: .touchUpInside)
+        contentView.addSubview(tradeAccountBtn)
+        
+        let tradePhoneBtn:UIButton = UIButton()
+        tradePhoneBtn.addTarget(self, action: #selector(gotoTradePhoneCtrl), for: .touchUpInside)
+        contentView.addSubview(tradePhoneBtn)
+        
+        let wide:CGFloat = SCREEN_WDITH/4.0
+        
+        transferBtn.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-wide)
+            make.top.equalToSuperview().offset(navigationHeight)
+            make.width.equalTo(wide)
+            make.height.equalTo(80)
+        }
+        
+        amountBtn.snp.makeConstraints { make in
+            make.right.equalToSuperview()
+            make.top.equalToSuperview().offset(navigationHeight)
+            make.width.equalTo(wide)
+            make.height.equalTo(80)
+        }
+        
+        tradeAccountBtn.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-SCREEN_WDITH/5.0)
+            make.top.equalToSuperview().offset(randomimageHigh)
+            make.width.equalTo(SCREEN_WDITH/5.0)
+            make.height.equalTo(btnsHigh/2.0)
+        }
+        
+        tradePhoneBtn.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(SCREEN_WDITH/5.0)
+            make.top.equalToSuperview().offset(randomimageHigh + btnsHigh/2.0)
+            make.width.equalTo(SCREEN_WDITH/5.0)
+            make.height.equalTo(btnsHigh/2.0)
+        }
     }
     
     @objc func showFacelogin(){
@@ -506,7 +519,6 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
             ctrl.authenticateWithFaceID()
         }else{
             //退出登录 需要弹框
-            
             faceCheck = true
             
             self.loginimg!.image = UIImage(named: "head_login1")?.withRenderingMode(.alwaysTemplate)
@@ -527,13 +539,19 @@ class MainCtrl: BaseCtrl,UIScrollViewDelegate {
         self.navigationController?.pushViewController(ctrl, animated: true)
     }
     
-    @objc func gotoRecordList(){
-        print("我的交易")
-        let ctrl:TradeRecordListCtrl = TradeRecordListCtrl()
-        ctrl.enableLazyLoad = true
-        self.navigationController?.pushViewController(ctrl, animated: true)
+    @objc func gotoTradeAccountCtrl(){
+        print("账户转账")
+//        let ctrl:TradeRecordListCtrl = TradeRecordListCtrl()
+//        ctrl.enableLazyLoad = true
+//        self.navigationController?.pushViewController(ctrl, animated: true)
     }
     
+    @objc func gotoTradePhoneCtrl(){
+        print("手机号转账")
+//        let ctrl:TradeRecordListCtrl = TradeRecordListCtrl()
+//        ctrl.enableLazyLoad = true
+//        self.navigationController?.pushViewController(ctrl, animated: true)
+    }
     
     override func viewDidLayoutSubviews(){
         super.viewDidLayoutSubviews()

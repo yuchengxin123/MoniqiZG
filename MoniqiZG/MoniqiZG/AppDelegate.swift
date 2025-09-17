@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         //捕获系统 Signal 比如野指针、空指针访问、非法内存写入
         setupSignalHandlers()
         
+        getAllFontName()
+        
         // 清除角标
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
@@ -48,6 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
        // myPartnerList = TransferPartner.loadArray(forKey: MyTransferPartnerCards, as: TransferPartner.self)
         //我的卡
         myCardList = CardModel.loadArray(forKey: MyCards, as: CardModel.self)
+        
         
         return true
     }

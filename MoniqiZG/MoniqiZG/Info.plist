@@ -83,6 +83,7 @@
 	<string>通知可能包括提醒、声音和图标标记。可在“设置”中配置相关功能。</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>menk_narin_std_ex_tig.ttf</string>
 		<string>font_money_medium.ttf</string>
 		<string>uncommon_font.ttf</string>
 	</array>

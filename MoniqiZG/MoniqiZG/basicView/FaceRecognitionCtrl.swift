@@ -51,7 +51,7 @@ class FaceRecognitionCtrl: UIViewController {
         userImage.image = UIImage(named: "face_default")
         view.addSubview(userImage)
         
-        timelb = creatLabel(CGRect(x: 0, y: navigationHeight + 130, width: SCREEN_WDITH, height: 40), String(format: "%@", myUser?.phone ?? "111****1111"), fontMedium(20), Main_TextColor)
+        timelb = creatLabel(CGRect(x: 0, y: navigationHeight + 130, width: SCREEN_WDITH, height: 40), String(format: "%@", insertPhoneSpace(number: myUser?.phone ?? "",show: false,addSpace:false)), fontMedium(25), Main_TextColor)
         timelb!.textAlignment = .center
         view.addSubview(timelb!)
         
@@ -75,7 +75,7 @@ class FaceRecognitionCtrl: UIViewController {
     
     @objc func authenticateWithFaceID() {
 
-        timelb?.text = String(format: "%@", myUser?.phone ?? "111****1111")
+        timelb?.text = String(format: "%@", myUser?.phone ?? "")
         
         let context = LAContext()
         var error: NSError?

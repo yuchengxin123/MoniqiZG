@@ -251,7 +251,8 @@ public func fontLight(_ fontSize:CGFloat) -> UIFont{
 //数字字体
 public func fontNumber(_ fontSize:CGFloat,_ weight:UIFont.Weight = .medium) -> UIFont{
 //    let font:UIFont =  UIFont.systemFont(ofSize: fontSize, weight: weight)
-//    return font
+//    "DINPro-Medium"
+    //MenkNarinStdExTig
     let font:UIFont = UIFont.init(name: "DINPro-Medium", size: fontSize)!
     return font
 }
@@ -616,6 +617,35 @@ func randomBankCardNumber() -> Dictionary<String,Any> {
     }.joined()
     
     return ["card":cardNumberWithSpaces,"hotBank":hotBank[index]]
+}
+
+// MARK: - 每四位数字加一个空格
+func insertPhoneSpace(number:String ,show:Bool ,addSpace:Bool = true) -> String {
+    
+    var spaceNumber:String = number
+    
+    if show == false {
+        spaceNumber = spaceNumber.enumerated().map { (index, char) -> String in
+            if (index >= 3) && (index < spaceNumber.count - 4){
+                return "*"
+            }
+            return String(char)
+        }.joined()
+    }
+
+    if addSpace == true {
+        spaceNumber = spaceNumber.enumerated().map { (index, char) -> String in
+            if index == 3 {
+                return " \(char)"
+            }
+            if (index - 7) % 4 == 0 {
+                return " \(char)"
+            }
+            return String(char)
+        }.joined()
+    }
+
+    return spaceNumber
 }
 
 // MARK: - 随机中文名字

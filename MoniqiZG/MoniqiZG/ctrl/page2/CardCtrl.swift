@@ -229,11 +229,11 @@ class CardCtrl: BaseCtrl,UIScrollViewDelegate {
                 rightImageV.snp.makeConstraints { make in
                     make.right.equalToSuperview().inset(15)
                     make.centerY.equalTo(titlelb)
-                    make.width.height.equalTo(22)
+                    make.width.height.equalTo(14)
                 }
                 
                 detaillb.snp.makeConstraints { make in
-                    make.right.equalTo(rightImageV.snp.left).offset(3)
+                    make.right.equalTo(rightImageV.snp.left)
                     make.centerY.equalTo(titlelb)
                 }
             }

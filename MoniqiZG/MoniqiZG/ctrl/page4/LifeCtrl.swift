@@ -19,6 +19,7 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
     var serviceimg:UIImageView?
     var msgimg:UIImageView?
     var versionimg:UIImageView?
+    var phonelb:UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -221,6 +222,15 @@ class LifeCtrl: BaseCtrl , UIScrollViewDelegate{
             y+=(high + 50)
             
             if i == titles.count - 1 {
+                phonelb = creatLabel(CGRect.zero, insertPhoneSpace(number: myUser?.phone ?? "",show: false), fontSemibold(22), Main_TextColor)
+                imageV.addSubview(phonelb!)
+                
+                phonelb!.snp.makeConstraints { make in
+                    make.left.equalToSuperview().offset(18)
+                    make.top.equalToSuperview().offset(37)
+                    make.height.equalTo(24)
+                }
+                
                 contentView.snp.makeConstraints { make in
                     make.bottom.equalTo(imageV.snp.bottom).offset(50)
                 }

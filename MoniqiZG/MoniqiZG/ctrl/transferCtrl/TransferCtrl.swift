@@ -24,13 +24,10 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     private let myCardTable = UITableView()
     private let myCardDatas = BehaviorRelay<[CardModel]>(value: [])
     
-    private let myuserView:UIView = UIView()
     private let userIcon:UIImageView = UIImageView()
-    private let userName:UILabel = UILabel()
     private let userCards:UILabel = UILabel()
     private let userRightimg:UIImageView = UIImageView()
     
-    private let userLine:UIView = UIView()
     private var isShowCard = false
     private var allBtn:UIButton = UIButton()
     
@@ -46,7 +43,6 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         super.setupUI()
         addView()
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(changeMyTransfer), name: NSNotification.Name(rawValue: changeMyTransferNotificationName), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -61,13 +57,6 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         }
     }
     
-//    @objc func changeMyTransfer(){
-//        datas.accept(myPartnerList)
-//        
-//        transferTable.snp.updateConstraints { make in
-//            make.height.equalTo(Double(datas.value.count) * 70.0 - 1)
-//        }
-//    }
     
     func addHeadView(){
         let headView:UIView = UIView()
@@ -117,7 +106,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
             make.width.equalTo(80)
         }
         
-        let titlelb:UILabel = creatLabel(CGRect.zero, "转账", fontRegular(19), Main_TextColor)
+        let titlelb:UILabel = creatLabel(CGRect.zero, "转账汇款", fontRegular(19), Main_TextColor)
         titlelb.textAlignment = .center
         headView.addSubview(titlelb)
         
@@ -131,184 +120,141 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     func addView(){
         let img:UIImage = UIImage(named:"zhuanzhang1") ?? UIImage()
         
-        let high:CGFloat = img.size.height/img.size.width * SCREEN_WDITH
+        let high:CGFloat = img.size.height/img.size.width * (SCREEN_WDITH - 30)
         
         contentView.addSubview(cardImageV)
         cardImageV.image = img
         cardImageV.isUserInteractionEnabled = true
 
         cardImageV.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
+            make.left.right.equalToSuperview().inset(15)
             make.height.equalTo(high)
             make.top.equalToSuperview().offset(navigationHeight)
         }
         
-        let showCardButton:UIButton = UIButton()
-        cardImageV.addSubview(showCardButton)
-        showCardButton.isSelected = false
-        showCardButton.addTarget(self, action: #selector(showCard(button:)), for: .touchUpInside)
-        
         let transferButton:UIButton = UIButton()
-        transferButton.addTarget(self, action: #selector(gotoTransfer), for: .touchUpInside)
+        transferButton.tag = 100
+        transferButton.addTarget(self, action: #selector(gotoTransfer(button:)), for: .touchUpInside)
         cardImageV.addSubview(transferButton)
+        
+        let phoneButton:UIButton = UIButton()
+        phoneButton.tag = 101
+        phoneButton.addTarget(self, action: #selector(gotoTransfer(button:)), for: .touchUpInside)
+        cardImageV.addSubview(phoneButton)
         
         let transferListButton:UIButton = UIButton()
         transferListButton.addTarget(self, action: #selector(showAllRecord), for: .touchUpInside)
         cardImageV.addSubview(transferListButton)
         
-        showCardButton.snp.makeConstraints { make in
-            make.right.equalToSuperview()
-            make.width.height.equalTo(80)
-            make.top.equalToSuperview().offset(180)
+        transferButton.snp.makeConstraints { make in
+            make.left.top.equalToSuperview()
+            make.height.equalTo(high - 40)
+            make.width.equalTo(SCREEN_WDITH/3.0 - 10)
         }
         
-        transferButton.snp.makeConstraints { make in
-            make.left.top.equalToSuperview().offset(80)
-            make.width.height.equalTo(100)
+        phoneButton.snp.makeConstraints { make in
+            make.top.equalTo(transferButton)
+            make.left.equalTo(transferButton.snp.right)
+            make.height.equalTo(high - 40)
+            make.width.equalTo(SCREEN_WDITH/3.0 - 10)
         }
         
         transferListButton.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.width.height.equalTo(80)
-            make.top.equalToSuperview().offset(180)
+            make.right.equalToSuperview()
+            make.width.equalTo(SCREEN_WDITH/2.0)
+            make.height.equalTo(40)
+            make.bottom.equalToSuperview()
         }
         
         addMyCardView()
         
-        transferTable.register(cardCell.self, forCellReuseIdentifier: "cardCell")
-        transferTable.separatorStyle = .none
-        transferTable.backgroundColor = .white
-        transferTable.rowHeight = 70 // 设置固定高度
-        contentView.addSubview(transferTable)
-        transferTable.isScrollEnabled = false
-//        transferTable.rx.setDelegate(self).disposed(by: disposeBag)
-        
-        transferTable.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(myuserView.snp.bottom).offset(1)
-            make.height.equalTo(Double(datas.value.count) * 70.0 - 1)
-        }
-        
-        
-        // 先绑定数据源
-        datas
-            .bind(to: transferTable.rx.items(cellIdentifier: "cardCell", cellType: cardCell.self)) { index, model, cell in
-                guard let model = model as? TransferPartner else { return }
-                cell.addTransferModel(_data: model)
-                cell.delegate = self   // 🔑 关键
-            }
-            .disposed(by: disposeBag)
-        
-        Observable.zip(transferTable.rx.itemSelected, transferTable.rx.modelSelected(TransferPartner.self))
-            .subscribe(onNext: { [weak self] indexPath, model in
-                self?.transferTable.deselectRow(at: indexPath, animated: true)
-                guard let model = model as? TransferPartner else { return }
-                
-                let ctrl:TradeCtrl = TradeCtrl()
-                ctrl.oldModel = model
-                self?.navigationController?.pushViewController(ctrl, animated: true)
-            })
-            .disposed(by: disposeBag)
-        
-        
-        
         contentView.snp.makeConstraints { make in
             make.bottom.equalTo(transferTable.snp.bottom).offset(20)
         }
+        
+        setupViewWithRoundedCornersAndShadow(
+            cardImageV,
+            radius: 10.0,
+            corners: [.topLeft, .topRight , .bottomLeft,.bottomRight], // 示例: 左上+右下圆角
+            borderWidth: 0,
+            borderColor: .white,
+            shadowColor: .lightGray, // 浅灰色阴影
+            shadowRadius: 10,         // 柔和扩散效果
+            shadowOpacity: 0.2       // 浅色透明度
+        )
     }
     
     func addMyCardView(){
-        myuserView.backgroundColor = .white
-        contentView.addSubview(myuserView)
-        myuserView.isUserInteractionEnabled = true
-        myuserView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(cardImageV.snp.bottom)
-        }
+        allBtn = creatButton(CGRect.zero, "全部", fontRegular(14), HXColor(0x6697e0), .white, self, #selector(showAllPartner))
+        contentView.addSubview(allBtn)
         
-        allBtn = creatButton(CGRect.zero, "  全部 \(datas.value.count)  ", fontRegular(14), HXColor(0x6697e0), Main_backgroundColor, self, #selector(showAllPartner))
-        myuserView.addSubview(allBtn)
+        let titlelb:UILabel = creatLabel(CGRect.zero, "常用收款人", fontMedium(16), Main_TextColor)
+        contentView.addSubview(titlelb)
         
-        let titlelb:UILabel = creatLabel(CGRect.zero, "最近转账伙伴", fontMedium(18), Main_TextColor)
-        myuserView.addSubview(titlelb)
+        let line:UIView = UIView()
+        line.backgroundColor = Main_detailColor
+        contentView.addSubview(line)
         
         if let avatar = loadUserImage(fileName: "usericon.png") {
             userIcon.image = avatar
         } else {
             userIcon.image = UIImage(named: "user_default")
         }
-        myuserView.addSubview(userIcon)
+        contentView.addSubview(userIcon)
         
-        userName.text = myUser?.myName ?? "小招"
-        userName.font = fontRegular(16)
-        userName.textColor = Main_TextColor
-        myuserView.addSubview(userName)
         
-        userCards.text = "\(myCardDatas.value.count)"
+        userCards.text = "我的账户(\(myCardDatas.value.count))"
         userCards.font = fontRegular(12)
-        userCards.textColor = fieldPlaceholderColor
-        userCards.backgroundColor = Main_backgroundColor
-        userCards.textAlignment = .center
-        myuserView.addSubview(userCards)
+        userCards.textColor = Main_TextColor
+        userCards.backgroundColor = .white
+        contentView.addSubview(userCards)
         
-        let shareCardlb:UILabel = UILabel()
-        shareCardlb.text = "  分享卡号  "
-        shareCardlb.font = fontRegular(12)
-        shareCardlb.textColor = Main_TextColor
-        myuserView.addSubview(shareCardlb)
         
         userRightimg.image = UIImage(named: "user_botttom")
-        myuserView.addSubview(userRightimg)
+        contentView.addSubview(userRightimg)
         
         let btn:UIButton = UIButton()
         btn.addTarget(self, action: #selector(showMyCard), for: .touchUpInside)
-        myuserView.addSubview(btn)
+        contentView.addSubview(btn)
         
         myCardTable.register(cardCell.self, forCellReuseIdentifier: "myCardCell")
         myCardTable.separatorStyle = .none
         myCardTable.backgroundColor = .white
         myCardTable.rowHeight = 70 // 设置固定高度
-        myuserView.addSubview(myCardTable)
+        contentView.addSubview(myCardTable)
         myCardTable.isScrollEnabled = false
         
-        userLine.backgroundColor = HXColor(0xf3f3f3)
-        myuserView.addSubview(userLine)
         
         allBtn.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
             make.height.equalTo(24)
-            make.top.equalTo(cardImageV.snp.bottom)
+            make.top.equalTo(cardImageV.snp.bottom).offset(20)
         }
         
         titlelb.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(15)
-            make.height.equalTo(18)
+            make.height.equalTo(24)
             make.centerY.equalTo(allBtn)
         }
         
-        userIcon.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.width.equalTo(40)
-            make.top.equalTo(titlelb.snp.bottom).offset(35)
+        line.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(1)
+            make.top.equalTo(titlelb.snp.bottom).offset(15)
         }
         
-        userName.snp.makeConstraints { make in
-            make.left.equalTo(userIcon.snp.right).offset(15)
-            make.height.equalTo(20)
-            make.centerY.equalTo(userIcon)
+        userIcon.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(20)
+            make.height.width.equalTo(40)
+            make.top.equalTo(line.snp.bottom).offset(15)
         }
         
         userCards.snp.makeConstraints { make in
-            make.left.equalTo(userName.snp.right).offset(15)
-            make.height.width.equalTo(24)
-            make.centerY.equalTo(userName)
+            make.left.equalTo(userIcon.snp.right).offset(15)
+            make.height.equalTo(24)
+            make.centerY.equalTo(userIcon)
         }
         
-        shareCardlb.snp.makeConstraints { make in
-            make.left.equalTo(userCards.snp.right).offset(15)
-            make.height.equalTo(20)
-            make.centerY.equalTo(userCards)
-        }
         
         btn.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
@@ -320,21 +266,13 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
             make.right.equalToSuperview().offset(-15)
             make.height.equalTo(8)
             make.width.equalTo(15)
-            make.centerY.equalTo(shareCardlb)
+            make.centerY.equalTo(titlelb)
         }
         
         myCardTable.snp.makeConstraints { make in
-            make.left.equalTo(userName)
-            make.right.equalToSuperview()
+            make.left.right.equalToSuperview()
             make.height.equalTo(0)
             make.top.equalTo(userIcon.snp.bottom).offset(20)
-        }
-        
-        userLine.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(70)
-            make.right.equalToSuperview()
-            make.height.equalTo(1)
-            make.top.equalTo(userIcon.snp.bottom).offset(15)
         }
         
         // 先绑定数据源
@@ -355,24 +293,15 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
             })
             .disposed(by: disposeBag)
         
-        myuserView.snp.makeConstraints { make in
-            make.bottom.equalTo(myCardTable.snp.bottom).offset(10)
-        }
         
-        myuserView.layoutIfNeeded()
-        
-        ViewRadius(allBtn, 12)
         ViewRadius(userIcon, 20)
-        ViewRadius(userCards, 12)
-        ViewBorderRadius(shareCardlb, 10, 0.5, HXColor(0x6e6e6e))
     }
     
     @objc func showMyCard(){
         isShowCard = !isShowCard
         
-        userLine.isHidden = isShowCard
         
-        userRightimg.image = UIImage(named: isShowCard ? "user_top" : "user_botttom")
+        userRightimg.image = UIImage(named: isShowCard ? "user_top" : "user_bottom")
         
         myCardTable.snp.updateConstraints { make in
             if isShowCard == true {
@@ -395,7 +324,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         self.navigationController?.pushViewController(ctrl, animated: true)
     }
     
-    @objc func gotoTransfer(){
+    @objc func gotoTransfer(button:UIButton){
         if myCardDatas.value.count > 0 {
             let ctrl:TradeCtrl = TradeCtrl()
             ctrl.enableLazyLoad = true
@@ -407,24 +336,6 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
 
     }
     
-    @objc func showCard(button:UIButton){
-        button.isSelected = !button.isSelected
-        
-        var str:String = "zhuanzhang1"
-        if button.isSelected == true {
-            str = "zhuanzhang2"
-        }else{
-            str = "zhuanzhang1"
-        }
-        
-        let img:UIImage = UIImage(named:str) ?? UIImage()
-        
-        let high:CGFloat = img.size.height/img.size.width * SCREEN_WDITH
-        cardImageV.image = img
-        cardImageV.snp.updateConstraints { make in
-            make.height.equalTo(high)
-        }
-    }
     
     override func viewDidLayoutSubviews(){
         super.viewDidLayoutSubviews()
@@ -508,10 +419,7 @@ class cardCell: SwipeTableViewCell {
     let detaillb = UILabel()
     var model:CardModel?
     var transferModel:TransferPartner?
-    var isbig:Bool = true
     var handelOrderAction: ((String) -> Void)?
-    let topline:UIView = UIView()
-    let creditCardlb:UILabel = UILabel()
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -520,104 +428,54 @@ class cardCell: SwipeTableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = UITableViewCell.SelectionStyle.none
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = HXColor(0xfafafa)
         self.createCellUI()
     }
 
     func createCellUI(){
         contentView.addSubview(headImage)
         
-        titlelb.textColor = Main_TextColor
+        titlelb.textColor = HXColor(0xa3a3a3)
         titlelb.font = fontRegular(14)
-        titlelb.text = "测试"
+        titlelb.text = "尾号 9999 长城电子借记卡"
         contentView.addSubview(titlelb)
         
-        creditCardlb.textColor = HXColor(0xc94753)
-        creditCardlb.font = fontRegular(10)
-        creditCardlb.text = " 信用卡 "
-        creditCardlb.backgroundColor = HXColor(0xf7e5db)
-        contentView.addSubview(creditCardlb)
-        creditCardlb.isHidden = true
         
-        detaillb.textColor = Main_detailColor
+        detaillb.textColor = HXColor(0x613000)
         detaillb.font = fontRegular(12)
-        detaillb.text = "尾号(9999)"
+        detaillb.text = "  个人养老金  "
+        detaillb.backgroundColor = HXColor(0xf2e6d2)
+        detaillb.textAlignment = .center
         contentView.addSubview(detaillb)
         
         
-        topline.backgroundColor = HXColor(0xf3f3f3)
-        contentView.addSubview(topline)
-        
-        topline.snp.makeConstraints { make in
-            make.height.equalTo(1)
-            make.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(70)
-            make.right.equalToSuperview()
-        }
-        
         headImage.snp.makeConstraints { make in
-            if isbig == true {
-                make.height.width.equalTo(40)
-            }else{
-                make.height.width.equalTo(34)
-            }
-            make.left.equalToSuperview().offset(15)
+            make.height.width.equalTo(34)
+            make.left.equalToSuperview().offset(50)
             make.centerY.equalToSuperview()
         }
         
         titlelb.snp.makeConstraints { make in
             make.height.equalTo(20)
-            make.top.equalToSuperview().offset(15)
-            make.left.equalToSuperview().offset(70)
-            make.right.equalToSuperview()
+            make.centerY.equalTo(headImage)
+            make.left.equalTo(headImage.snp.right).offset(20)
         }
         
-        creditCardlb.snp.makeConstraints { make in
-            make.height.equalTo(18)
-            make.centerY.equalTo(titlelb)
-            make.left.equalTo(titlelb).offset(5)
-        }
-
         detaillb.snp.makeConstraints { make in
-            make.height.equalTo(16)
-            make.bottom.equalToSuperview().offset(-15)
-            make.left.right.equalTo(titlelb)
+            make.height.equalTo(24)
+            make.centerY.equalToSuperview()
+            make.right.equalToSuperview().offset(-15)
         }
         
-        ViewRadius(creditCardlb, 2)
-    }
-
-    func addTransferModel(_data:TransferPartner) {
-        transferModel = _data
-        titlelb.text = _data.name
-        detaillb.text =  "\(_data.bankName) (\(_data.lastCard))"
-        headImage.image = UIImage(named: _data.icon)
-  
-        topline.snp.updateConstraints { make in
-            make.left.equalToSuperview().offset(70)
-        }
+        ViewRadius(detaillb, 2)
         
-        headImage.snp.updateConstraints { make in
-            make.height.width.equalTo(40)
-        }
+        detaillb.isHidden = true
     }
-    
     
     func addData(_data:CardModel) {
         model = _data
-        titlelb.text = _data.name
-        detaillb.text = ("尾号 (\(_data.lastCard))")
+        titlelb.text = ("尾号 \(_data.lastCard) \(_data.bank)")
         headImage.image = UIImage(named: _data.icon)
-        
-        creditCardlb.isHidden = _data.type != "信用卡"
-        
-        topline.snp.updateConstraints { make in
-            make.left.equalToSuperview()
-        }
-        
-        headImage.snp.updateConstraints { make in
-            make.height.width.equalTo(30)
-        }
     }
     
     override func awakeFromNib() {

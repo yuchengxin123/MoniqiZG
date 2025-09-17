@@ -223,7 +223,7 @@ class MyPartnerCtrl: BaseCtrl, UITableViewDelegate {
         let dataSource = RxTableViewSectionedReloadDataSource<PartnerSection>(
             configureCell: { _, tableView, indexPath, item in
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cardCell", for: indexPath) as! cardCell
-                cell.addTransferModel(_data: item)
+              //  cell.addTransferModel(_data: item)
                 return cell
             }
         )

@@ -33,34 +33,26 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
     let accountView:UIView = UIView()
     var quanyiBtn:UIButton?//权益
     var cardsBtn:UIButton?//银行卡数
-    var pointsBtn:UIButton?//积分
-    var managerlb:UIButton?//我的经理
+    var managerlb:UILabel?
     
     //我的资产
-    let billView:UIView = UIView()
+    let billView:UIImageView = UIImageView()
     let showImage:UIImageView = UIImageView()
+    var timelb:UILabel?
     var moneyBtn:SecureLoadingLabel = SecureLoadingLabel()
     var incomeBtn:SecureLoadingLabel = SecureLoadingLabel()
 
     //本月收支
-    let monthView:UIView = UIView()
+    let monthView:UIImageView = UIImageView()
     var incomeMoneyBtn:SecureLoadingLabel = SecureLoadingLabel()
     var expenditureMoneyBtn:SecureLoadingLabel = SecureLoadingLabel()
     let percentageLineView:PercentageLine = PercentageLine()
     
-    //信用卡 贷款
-    var creditView:UIView = UIView()
-    var loanView:UIView = UIView()
-    var creditMoneyBtn:SecureLoadingLabel = SecureLoadingLabel()//信用卡消费
-    var creditMonthBtn:SecureLoadingLabel = SecureLoadingLabel()//信用卡账单日期
-    var loanMoneyBtn:SecureLoadingLabel = SecureLoadingLabel()//贷款额度
-    var loanRateBtn:SecureLoadingLabel = SecureLoadingLabel()//利率
-    
-    //五险一金
-    let providentFundView:UIView = UIView()
-    var yibaoBtn:SecureLoadingLabel = SecureLoadingLabel()
-    var gongjijinBtn:SecureLoadingLabel = SecureLoadingLabel()
-    var yuefenBtn:UIButton = UIButton()
+    //我的网点
+    var branchView:UIImageView?
+    var banklb:UILabel?
+    var locBanklb:UILabel?
+    var distancelb:UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,32 +87,18 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         }
         nameBtn?.setTitle(String(format: "**%@", String(myUser!.myName.suffix(1))), for: .normal)
         
-//        //银行卡 待办 卡券 积分
-//        cardsBtn?.setTitle("\(myCardList.count)", for: .normal)
-//        daibanBtn?.setTitle("\(myUser?.myWorks ?? 0)", for: .normal)
-//        couponsBtn?.setTitle("\(myUser?.myCoupons ?? 0)", for: .normal)
-//        pointsBtn?.setTitle(getNumberFormatter(Double(myUser?.myPoints ?? 0),0), for: .normal)
-//        
-//        //账户总览
-//        moneyBtn.text = String(format: "%@¥ %@",(myUser!.isCut ? "-":""), getNumberFormatter(myUser?.myBalance ?? 0.00))
-//        incomeBtn.text = String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
-//        
-//        //本月收支
-//        expenditureMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthCost ?? 0.00))
-//        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
-//        uploadPercentageLineView()
-//        
-//        //信用卡账单
-//        creditMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.creditCardSpending ?? 0.00))
-//        creditMonthBtn.text = "\(myUser?.billingDate ?? "08-16")出账"
-//        loanMoneyBtn.text = "最高可借 \(getNumberFormatter(Double(myUser?.loanAmount ?? 0),0)) 万"
-//        //年利率 怎么算
-//        
-//        yibaoBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.medicalInsurance ?? 0.00))
-//        gongjijinBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.providentFund ?? 0.00))
-//        yuefenBtn.setTitle("\(myUser?.providentUpdateTime ?? "08-01") 余额", for: .normal)
-//        
-//        self.uploadVip()
+        //银行卡 待办 卡券 积分
+        cardsBtn?.setTitle("\(myCardList.count)", for: .normal)
+        quanyiBtn?.setTitle("\(myUser?.myWorks ?? 0)", for: .normal)
+        
+        //账户总览
+        moneyBtn.text = String(format: "%@¥ %@",(myUser!.isCut ? "-":""), getNumberFormatter(myUser?.myBalance ?? 0.00))
+        incomeBtn.text = String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
+        
+        //本月收支
+        expenditureMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthCost ?? 0.00))
+        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
+        uploadPercentageLineView()
         
     }
     
@@ -145,44 +123,15 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         addHeadInfoView()
         
         addMyAccountView()
-//        self.addBillOverView()
-//        
-//        self.addMonthView()
-//        
-//        self.addCreditAndCardView()
-//        
-//        self.addProvidentFundView()
-//        
-//        self.addCreditAndCardView()
-//        
-//        self.addBottomView()
-//        
-//        self.cancelButtonAction()
+        
+        addBillOverView()
+        
+        addMonthView()
+       
+        addBottomView()
+        
+        addBranchView()
     }
-    
-    // MARK: - 取消外面编辑
-//    func cancelButtonAction(){
-//        nameBtn?.isUserInteractionEnabled = false
-//        
-//        daibanBtn?.isUserInteractionEnabled = false
-//        couponsBtn?.isUserInteractionEnabled = false
-//        pointsBtn?.isUserInteractionEnabled = false
-//        
-////        moneyBtn.isUserInteractionEnabled = false
-//        incomeBtn.isUserInteractionEnabled = false
-//        
-////        incomeMoneyBtn.isUserInteractionEnabled = false
-////        expenditureMoneyBtn.isUserInteractionEnabled = false
-//        
-//        creditMoneyBtn.isUserInteractionEnabled = false
-//        creditMonthBtn.isUserInteractionEnabled = false
-//        loanMoneyBtn.isUserInteractionEnabled = false
-//        loanRateBtn.isUserInteractionEnabled = false
-//        
-//        yibaoBtn.isUserInteractionEnabled = false
-//        gongjijinBtn.isUserInteractionEnabled = false
-//        yuefenBtn.isUserInteractionEnabled = false
-//    }
     
     //导航栏
     func addTopView(){
@@ -289,14 +238,8 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
             self?.moneyBtn.show()
             self?.incomeBtn.show()
 
-            self?.creditMonthBtn.show()
             self?.incomeMoneyBtn.show()
             self?.expenditureMoneyBtn.show()
-
-            self?.creditMoneyBtn.show()
-
-            self?.yibaoBtn.show()
-            self?.gongjijinBtn.show()
         }
         self.navigationController?.pushViewController(ctrl, animated: true)
 
@@ -304,7 +247,7 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
     }
     
     
-    //用户信息
+    //MARK: - 用户信息
     func addHeadInfoView(){
         headView.backgroundColor = Main_Color
         contentView.insertSubview(headView, at: 0)
@@ -384,13 +327,9 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         }
         ViewRadius(userBtn!, 30)
     }
-    //我的账户
+    
+    //MARK: - 我的账户
     func addMyAccountView(){
-//        let accountView:UIView = UIView()
-//        var quanyiBtn:UIButton?//权益
-//        var cardsBtn:UIButton?//银行卡数
-//        var pointsBtn:UIButton?//积分
-//        var managerlb:UIButton?//我的经理
         let img:UIImage = UIImage(named: "my_daiban") ?? UIImage()
         let high:CGFloat = img.size.height/img.size.width * SCREEN_WDITH
         
@@ -404,28 +343,109 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
             make.top.equalTo(manageimg.snp.bottom)
         }
         
+        accountView.backgroundColor = .white
         contentView.addSubview(accountView)
         
         accountView.snp.makeConstraints { make in
-            make.height.equalTo(150)
+            make.height.equalTo(170)
             make.left.right.equalToSuperview().inset(15)
-            make.top.equalTo(daibanImg.snp.bottom).offset(10)
+            make.top.equalTo(daibanImg.snp.bottom).offset(20)
         }
         
-        let titles:Array<String> = ["\(myUser!.myCards)","\(myUser!.myWorks)","",""]
+        let titles:Array<String> = ["\(myUser!.myCards)","\(myUser!.myWorks)","my_money_btn","my_game_btn"]
         let details:Array<String> = ["我的账户","我的权益","我的积分","我的游戏"]
         let wide:CGFloat = (SCREEN_WDITH - 30)/4.0
         
         for (i,str) in details.enumerated() {
-            if i <= 1 {
+            let detaillb:UILabel = creatLabel(CGRect.zero, str, fontRegular(13), Main_TextColor)
+            detaillb.textAlignment = .center
+            accountView.addSubview(detaillb)
+            
+            detaillb.snp.makeConstraints { make in
+                make.width.equalTo(wide)
+                make.height.equalTo(14)
+                make.left.equalToSuperview().offset(wide * Double(i))
+                make.top.equalToSuperview().offset(65)
+            }
+            
+            if i == 0 {
+                cardsBtn = creatButton(CGRect.zero, titles[i], fontRegular(24), Main_TextColor, .clear, self, #selector(setCards))
+                accountView.addSubview(cardsBtn!)
                 
+                cardsBtn!.snp.makeConstraints { make in
+                    make.width.equalTo(wide)
+                    make.height.equalTo(40)
+                    make.centerX.equalTo(detaillb)
+                    make.bottom.equalTo(detaillb.snp.top).offset(-7)
+                }
+            }else if(i == 1){
+                quanyiBtn = creatButton(CGRect.zero, titles[i], fontRegular(24), Main_TextColor, .clear, self, #selector(setCards))
+                accountView.addSubview(quanyiBtn!)
                 
+                quanyiBtn!.snp.makeConstraints { make in
+                    make.width.equalTo(wide)
+                    make.height.equalTo(40)
+                    make.centerX.equalTo(detaillb)
+                    make.bottom.equalTo(detaillb.snp.top).offset(-7)
+                }
             }else{
+                let imgbtn:UIImageView = UIImageView()
+                imgbtn.image = UIImage(named: titles[i])
+                accountView.addSubview(imgbtn)
                 
+                imgbtn.snp.makeConstraints { make in
+                    make.height.width.equalTo(44)
+                    make.centerX.equalTo(detaillb)
+                    make.centerY.equalTo(cardsBtn!)
+                }
             }
         }
         
+        let managerView:UIView = UIView()
+        managerView.backgroundColor = HXColor(0xf9f9f9)
+        accountView.addSubview(managerView)
         
+        managerView.snp.makeConstraints { make in
+            make.height.equalTo(46)
+            make.bottom.equalToSuperview().offset(-18)
+            make.left.right.equalToSuperview().inset(7)
+        }
+        
+        let managerimg:UIImageView = UIImageView(image: UIImage(named: "my_manager_default"))
+        managerView.addSubview(managerimg)
+        
+        managerimg.snp.makeConstraints { make in
+            make.height.width.equalTo(34)
+            make.top.bottom.equalToSuperview().inset(6)
+            make.left.equalToSuperview().inset(15)
+        }
+        
+        managerlb = creatLabel(CGRect.zero, "哈吉米", fontSemibold(16), Main_TextColor)
+        managerView.addSubview(managerlb!)
+        
+        managerlb!.snp.makeConstraints { make in
+            make.height.equalTo(30)
+            make.centerY.equalToSuperview()
+            make.left.equalTo(managerimg.snp.right).offset(15)
+        }
+        
+        let rightImageV:UIImageView = UIImageView(image: UIImage(named: "my_right"))
+        managerView.addSubview(rightImageV)
+        
+        rightImageV.snp.makeConstraints { make in
+            make.width.height.equalTo(14)
+            make.centerY.equalToSuperview()
+            make.right.equalToSuperview().offset(-15)
+        }
+        
+        let detaillb:UILabel = creatLabel(CGRect.zero, "我的客户经理", fontRegular(15), Main_detailColor)
+        managerView.addSubview(detaillb)
+        detaillb.snp.makeConstraints { make in
+            make.right.equalTo(rightImageV.snp.left).offset(-3)
+            make.centerY.equalToSuperview()
+        }
+        
+        self.view.layoutIfNeeded()
         
         setupViewWithRoundedCornersAndShadow(
             accountView,
@@ -437,185 +457,139 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
             shadowRadius: 10,         // 柔和扩散效果
             shadowOpacity: 0.2       // 浅色透明度
         )
-//
-//        cardsBtn = creatButton(CGRect.zero, "\(myCardList.count)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCards))
-//        headView.addSubview(cardsBtn!)
-//
-//        daibanBtn = creatButton(CGRect.zero, "\(myUser?.myWorks ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setDaiban))
-//        headView.addSubview(daibanBtn!)
-//
-//        couponsBtn = creatButton(CGRect.zero, "\(myUser?.myCoupons ?? 0)", fontNumber(20), Main_TextColor, .clear, self, #selector(setCoupons))
-//        headView.addSubview(couponsBtn!)
-//
-//        pointsBtn = creatButton(CGRect.zero, getNumberFormatter(Double(myUser?.myPoints ?? 0),0), fontNumber(20), Main_TextColor, .clear, self, #selector(setPoints))
-//        headView.addSubview(pointsBtn!)
-//
-//        let cardslb = creatLabel(CGRect.zero, "银行卡", fontRegular(12), HXColor(0x565656))
-//        cardslb.textAlignment = .center
-//        headView.addSubview(cardslb)
-//
-//        let daibanlb = creatLabel(CGRect.zero, "待办", fontRegular(12), HXColor(0x565656))
-//        daibanlb.textAlignment = .center
-//        headView.addSubview(daibanlb)
-//
-//        let couponlb = creatLabel(CGRect.zero, "卡券", fontRegular(12), HXColor(0x565656))
-//        couponlb.textAlignment = .center
-//        headView.addSubview(couponlb)
-//
-//        let pointlb = creatLabel(CGRect.zero, "积分", fontRegular(12), HXColor(0x565656))
-//        pointlb.textAlignment = .center
-//        headView.addSubview(pointlb)
         
-        //        cardsBtn!.snp.makeConstraints { make in
-        //            make.height.equalTo(30)
-        //            make.width.equalTo(wide)
-        //            make.left.equalToSuperview().offset(15)
-        //            make.top.equalTo(userBtn!.snp.bottom).offset(15)
-        //        }
-        //
-        //        daibanBtn!.snp.makeConstraints { make in
-        //            make.height.width.top.equalTo(cardsBtn!)
-        //            make.left.equalToSuperview().offset(wide + 15)
-        //        }
-        //
-        //        couponsBtn!.snp.makeConstraints { make in
-        //            make.height.width.top.equalTo(cardsBtn!)
-        //            make.left.equalToSuperview().offset(wide * 2.0 + 15)
-        //        }
-        //
-        //        pointsBtn!.snp.makeConstraints { make in
-        //            make.height.width.top.equalTo(cardsBtn!)
-        //            make.left.equalToSuperview().offset(wide * 3.0 + 15)
-        //        }
-        //
-        //        cardslb.snp.makeConstraints { make in
-        //            make.height.equalTo(20)
-        //            make.width.equalTo(wide)
-        //            make.left.equalTo(cardsBtn!)
-        //            make.top.equalTo(cardsBtn!.snp.bottom)
-        //        }
-        //
-        //        daibanlb.snp.makeConstraints { make in
-        //            make.width.height.top.equalTo(cardslb)
-        //            make.left.equalTo(daibanBtn!)
-        //        }
-        //
-        //        couponlb.snp.makeConstraints { make in
-        //            make.width.height.top.equalTo(cardslb)
-        //            make.left.equalTo(couponsBtn!)
-        //        }
-        //
-        //        pointlb.snp.makeConstraints { make in
-        //            make.width.height.top.equalTo(cardslb)
-        //            make.left.equalTo(pointsBtn!)
-        //        }
-                
+        ViewRadius(managerView, 4)
     }
     
-    //我的资产
+    //MARK: - 我的资产
     func addBillOverView(){
-        //0xf0effc
-        //MyDetailColor
-        billView.backgroundColor = .white
-        contentView.addSubview(billView)
-
-        let titlelb = creatLabel(CGRect.zero, "账户总览", fontMedium(16), Main_TextColor)
-        billView.addSubview(titlelb)
+        var titlelb:UILabel = creatLabel(CGRect.zero, "我的资产", fontSemibold(18), Main_TextColor)
+        contentView.addSubview(titlelb)
         
-        let line:UIView = UIView()
-        line.backgroundColor = HXColor(0xf0effc)
-        billView.insertSubview(line, at: 0)
+        titlelb.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(15)
+            make.top.equalTo(accountView.snp.bottom).offset(8)
+            make.height.equalTo(42)
+        }
         
-        showImage.image = UIImage(named: "showMoney")
+        showImage.image = UIImage(named: "caifu_hide")
         showImage.contentMode = .scaleAspectFill
-        billView.addSubview(showImage)
+        contentView.addSubview(showImage)
+        
+        showImage.snp.makeConstraints { make in
+            make.centerY.equalTo(titlelb)
+            make.left.equalTo(titlelb.snp.right).offset(10)
+            make.height.equalTo(14)
+            make.width.equalTo(21)
+        }
         
         let showBtn:UIButton = UIButton()
         showBtn.backgroundColor = .clear
         showBtn.addTarget(self, action: #selector(showMoney(button:)), for: .touchUpInside)
         showBtn.isSelected = false
-        billView.addSubview(showBtn)
+        contentView.addSubview(showBtn)
         
-        let totallb = creatLabel(CGRect.zero, "总资产", fontRegular(14), HXColor(0xb5b5b5))
-        billView.addSubview(totallb)
-       
+        showBtn.snp.makeConstraints { make in
+            make.height.width.equalTo(60)
+            make.left.centerY.equalTo(showImage)
+        }
+        
+        let rightImage:UIImageView = UIImageView(image: UIImage(named: "my_refresh")?.withRenderingMode(.alwaysTemplate))
+        rightImage.tintColor = .black
+        contentView.addSubview(rightImage)
+        
+        rightImage.snp.makeConstraints { make in
+            make.centerY.equalTo(titlelb)
+            make.right.equalToSuperview().offset(-15)
+            make.width.height.equalTo(25)
+        }
+        
+        timelb = creatLabel(CGRect.zero, getCurrentTimeString(dateFormat: "yyyy/MM/dd HH:mm:ss"), fontRegular(12), Main_detailColor)
+        contentView.addSubview(timelb!)
+        
+        timelb!.snp.makeConstraints { make in
+            make.centerY.equalTo(titlelb)
+            make.right.equalTo(rightImage.snp.left).offset(-5)
+            make.height.equalTo(14)
+        }
+        
+        let bgimage:UIImage = UIImage(named: "my_money_bg") ?? UIImage()
+        let high:CGFloat = bgimage.size.height/bgimage.size.width * (SCREEN_WDITH - 30)
+        
+        billView.image = bgimage
+        contentView.addSubview(billView)
+        
+        billView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(15)
+            make.top.equalTo(titlelb.snp.bottom)
+            make.height.equalTo(high)
+        }
+        
+        titlelb = creatLabel(CGRect.zero, "资产", fontRegular(14), Main_detailColor)
+        billView.addSubview(titlelb)
+        
+        titlelb.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(15)
+            make.top.equalToSuperview().offset(22)
+            make.height.equalTo(14)
+        }
+        
+        var rightImageV:UIImageView = UIImageView(image: UIImage(named: "my_right"))
+        billView.addSubview(rightImageV)
+        
+        rightImageV.snp.makeConstraints { make in
+            make.width.height.equalTo(14)
+            make.centerY.equalTo(titlelb)
+            make.left.equalTo(titlelb.snp.right).offset(5)
+        }
+        
+        
+        let moneyimg:UIImageView = UIImageView(image: UIImage(named: "my_money_title"))
+        billView.addSubview(moneyimg)
+        
+        moneyimg.snp.makeConstraints { make in
+            make.height.equalTo(16)
+            make.width.equalTo(48)
+            make.centerY.equalTo(titlelb)
+            make.left.equalTo(rightImageV.snp.right).offset(5)
+        }
+        
+        rightImageV = UIImageView(image: UIImage(named: "my_right"))
+        billView.addSubview(rightImageV)
+        
+        rightImageV.snp.makeConstraints { make in
+            make.width.height.equalTo(14)
+            make.centerY.equalTo(titlelb)
+            make.right.equalToSuperview().offset(-15)
+        }
+        
+        titlelb = creatLabel(CGRect.zero, "昨日收益", fontRegular(14), Main_detailColor)
+        billView.addSubview(titlelb)
+        
+        titlelb.snp.makeConstraints { make in
+            make.right.equalTo(rightImageV.snp.left).offset(-2)
+            make.centerY.equalTo(moneyimg)
+            make.height.equalTo(14)
+        }
         
         moneyBtn.text =  String(format: "¥ %@", getNumberFormatter(myUser?.myBalance ?? 0.00))
         moneyBtn.isSecureText = false
         moneyBtn.font = fontNumber(25)
-        moneyBtn.addTarget(self, action: #selector(changeMyMoney), for: .touchUpInside)
         moneyBtn.textAlignment = .left
         billView.addSubview(moneyBtn)
         
-        let incomelb = creatLabel(CGRect.zero, "昨日收益", fontRegular(14), HXColor(0xb5b5b5))
-        billView.addSubview(incomelb)
-        
-        incomeBtn.text =  String(format: "+%@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
+        incomeBtn.text =  String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myBalance)))
         incomeBtn.isSecureText = false
         incomeBtn.font = fontNumber(25)
-        incomeBtn.addTarget(self, action: #selector(changeMyIncome), for: .touchUpInside)
         incomeBtn.textAlignment = .right
         billView.addSubview(incomeBtn)
         
         incomeBtn.setPosition(position: .right)
         
-        let smallline:UIView = UIView()
-        smallline.backgroundColor = defaultLineColor
-        billView.addSubview(smallline)
-        
-        let redDot:UIView = UIView()
-        redDot.backgroundColor = HXColor(0xe85433)
-        billView.addSubview(redDot)
-        
-        let detaillb = creatLabel(CGRect.zero, "闪电贷提款达标有礼，至高赢华为运动手表", fontRegular(14), HXColor(0x808080))
-        billView.addSubview(detaillb)
-        
-        billView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(15)
-            make.top.equalTo(headView.snp.bottom).offset(5)
-            make.height.equalTo(180)
-        }
-        
-        titlelb.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-        }
-        
-        line.snp.makeConstraints { make in
-            make.top.equalTo(titlelb.snp.bottom).offset(-4)
-            make.left.width.equalTo(titlelb)
-            make.height.equalTo(8)
-        }
-        
-        showImage.snp.makeConstraints { make in
-            make.centerY.equalTo(titlelb)
-            make.left.equalTo(titlelb.snp.right).offset(10)
-            make.height.equalTo(13)
-            make.width.equalTo(19)
-        }
-        
-        showBtn.snp.makeConstraints { make in
-            make.centerY.equalTo(titlelb)
-            make.left.equalTo(titlelb.snp.right)
-            make.height.width.equalTo(60)
-        }
-        
-        totallb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(15)
-            make.top.equalTo(titlelb.snp.bottom).offset(20)
-        }
-        
-        incomelb.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.height.top.equalTo(totallb)
-        }
-        
         moneyBtn.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(15)
-            make.height.equalTo(40)
-            make.top.equalTo(totallb.snp.bottom)
+            make.height.equalTo(35)
+            make.top.equalTo(titlelb.snp.bottom).offset(13)
         }
         
         incomeBtn.snp.makeConstraints { make in
@@ -623,120 +597,106 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
             make.height.top.equalTo(moneyBtn)
         }
         
-        smallline.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-50)
-            make.left.right.equalToSuperview().inset(15)
-            make.height.equalTo(1)
-        }
+        self.view.layoutIfNeeded()
         
-        redDot.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-22)
-            make.left.equalToSuperview().inset(15)
-            make.height.width.equalTo(6)
-        }
-        
-        detaillb.snp.makeConstraints { make in
-            make.centerY.equalTo(redDot)
-            make.left.equalTo(redDot.snp.right).offset(5)
-            make.height.equalTo(15)
-        }
-        
-        ViewRadius(redDot, 3)
-        ViewRadius(billView, 10)
+        setupViewWithRoundedCornersAndShadow(
+            billView,
+            radius: 10.0,
+            corners: [.topLeft, .topRight , .bottomLeft,.bottomRight], // 示例: 左上+右下圆角
+            borderWidth: 0,
+            borderColor: .white,
+            shadowColor: .lightGray, // 浅灰色阴影
+            shadowRadius: 10,         // 柔和扩散效果
+            shadowOpacity: 0.2       // 浅色透明度
+        )
     }
     
-    //本月收支
+    //MARK: - 本月收支
     func addMonthView(){
-        monthView.backgroundColor = .white
+        var titlelb:UILabel = creatLabel(CGRect.zero, "本月收支", fontSemibold(18), Main_TextColor)
+        contentView.addSubview(titlelb)
+        
+        titlelb.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(15)
+            make.top.equalTo(billView.snp.bottom).offset(8)
+            make.height.equalTo(42)
+        }
+        
+        let bgimage:UIImage = UIImage(named: "my_money_bg") ?? UIImage()
+        let high:CGFloat = bgimage.size.height/bgimage.size.width * (SCREEN_WDITH - 30)
+        
+        monthView.image = bgimage
         contentView.addSubview(monthView)
-
-        let titlelb = creatLabel(CGRect.zero, "本月收支", fontMedium(16), Main_TextColor)
-        monthView.addSubview(titlelb)
-        
-        
-        let totallb = creatLabel(CGRect.zero, "支出", fontRegular(14), HXColor(0xb5b5b5))
-        monthView.addSubview(totallb)
-        
-        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthCost ?? 0.00))
-        incomeMoneyBtn.isSecureText = false
-        incomeMoneyBtn.font = fontNumber(20)
-        incomeMoneyBtn.addTarget(self, action: #selector(changeMonthIncome), for: .touchUpInside)
-        incomeMoneyBtn.textAlignment = .left
-        monthView.addSubview(incomeMoneyBtn)
-        
-        let incomelb = creatLabel(CGRect.zero, "收入", fontRegular(14), HXColor(0xb5b5b5))
-        monthView.addSubview(incomelb)
-        
-        expenditureMoneyBtn.text =  String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
-        expenditureMoneyBtn.isSecureText = false
-        expenditureMoneyBtn.font = fontNumber(20)
-        expenditureMoneyBtn.addTarget(self, action: #selector(changeMyExpenses), for: .touchUpInside)
-        expenditureMoneyBtn.textAlignment = .right
-        monthView.addSubview(expenditureMoneyBtn)
-        expenditureMoneyBtn.setPosition(position: .right)
-        
-        monthView.addSubview(percentageLineView)
-        
-        let detaillb = creatLabel(CGRect.zero, "我的外卖点单账单", fontRegular(14), HXColor(0x808080))
-        monthView.addSubview(detaillb)
-        
-        let rightlb = creatLabel(CGRect.zero, "查看", fontRegular(14), HXColor(0x5995ef))
-        monthView.addSubview(rightlb)
         
         monthView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(15)
-            make.top.equalTo(billView.snp.bottom).offset(15)
-            make.height.equalTo(190)
+            make.top.equalTo(titlelb.snp.bottom)
+            make.height.equalTo(high)
         }
+        
+        titlelb = creatLabel(CGRect.zero, "收入", fontRegular(14), Main_detailColor)
+        monthView.addSubview(titlelb)
         
         titlelb.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
             make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
+            make.top.equalToSuperview().offset(22)
+            make.height.equalTo(14)
         }
         
-        totallb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(15)
-            make.top.equalTo(titlelb.snp.bottom).offset(18)
-        }
+        titlelb = creatLabel(CGRect.zero, "支出", fontRegular(14), Main_detailColor)
+        monthView.addSubview(titlelb)
         
-        incomelb.snp.makeConstraints { make in
+        titlelb.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
-            make.height.top.equalTo(totallb)
+            make.top.equalToSuperview().offset(22)
+            make.height.equalTo(14)
+        }
+        
+        incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.myMonthIncome ?? 0.00))
+        incomeMoneyBtn.isSecureText = false
+        incomeMoneyBtn.font = fontNumber(25)
+        incomeMoneyBtn.textAlignment = .left
+        monthView.addSubview(incomeMoneyBtn)
+        
+        expenditureMoneyBtn.text =  String(format: "¥ %@", getNumberFormatter(getIncome(aomunt: myUser!.myMonthCost)))
+        expenditureMoneyBtn.isSecureText = false
+        expenditureMoneyBtn.font = fontNumber(25)
+        expenditureMoneyBtn.textAlignment = .right
+        monthView.addSubview(expenditureMoneyBtn)
+        
+        expenditureMoneyBtn.setPosition(position: .right)
+        monthView.addSubview(percentageLineView)
+        
+        incomeMoneyBtn.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(15)
+            make.height.equalTo(35)
+            make.top.equalTo(titlelb.snp.bottom).offset(13)
         }
         
         expenditureMoneyBtn.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(40)
-            make.top.equalTo(totallb.snp.bottom)
-        }
-        
-        incomeMoneyBtn.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
-            make.height.top.equalTo(expenditureMoneyBtn)
+            make.height.top.equalTo(incomeMoneyBtn)
         }
-        
+
         percentageLineView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-65)
+            make.bottom.equalToSuperview().offset(-15)
             make.left.right.equalToSuperview().inset(15)
-            make.height.equalTo(2)
+            make.height.equalTo(5)
         }
         
-        detaillb.snp.makeConstraints { make in
-            make.top.equalTo(percentageLineView).offset(25)
-            make.left.equalToSuperview().inset(15)
-            make.height.equalTo(16)
-        }
+        self.view.layoutIfNeeded()
         
-        rightlb.snp.makeConstraints { make in
-            make.centerY.equalTo(detaillb)
-            make.right.equalToSuperview().inset(15)
-            make.height.equalTo(16)
-        }
-        
+        setupViewWithRoundedCornersAndShadow(
+            monthView,
+            radius: 10.0,
+            corners: [.topLeft, .topRight , .bottomLeft,.bottomRight], // 示例: 左上+右下圆角
+            borderWidth: 0,
+            borderColor: .white,
+            shadowColor: .lightGray, // 浅灰色阴影
+            shadowRadius: 10,         // 柔和扩散效果
+            shadowOpacity: 0.2       // 浅色透明度
+        )
         uploadPercentageLineView()
-        ViewRadius(monthView, 10)
     }
     
     func uploadPercentageLineView(){
@@ -748,514 +708,173 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         }
     }
     
-    //信用卡 贷款
-    func addCreditAndCardView(){
+    //MARK: - 网点
+    func addBranchView(){
+        banklb = creatLabel(CGRect.zero, "新加坡机场支行", fontSemibold(16), Main_TextColor)
+        banklb?.numberOfLines = 0
+        branchView?.addSubview(banklb!)
         
-        let bigTiitles:Array = ["信用卡","贷款"]
-        let smallTitles:Array = ["还款有礼","抽好礼"]
-        let detailsTitle:Array = ["\(myUser?.billingDate ?? "08-16")出账","最高可借 \(getNumberFormatter(Double(myUser?.loanAmount ?? 0),0)) 万"]
-        
-        let tiitles:Array = [String(format: "¥ %@", getNumberFormatter(myUser?.creditCardSpending ?? 0.00)),"年利率(单利)低至"]
-        
-        let wide:CGFloat = (SCREEN_WDITH/2.0) - 20
-        
-        for (i,str) in bigTiitles.enumerated() {
-            let basicView:UIView = UIView()
-            basicView.backgroundColor = .white
-            contentView.addSubview(basicView)
-            
-
-            let titlelb:UILabel = creatLabel(CGRect.zero, str, fontMedium(16), Main_TextColor)
-            basicView.addSubview(titlelb)
-         
-            let smallView:UIView = UIView()
-            smallView.backgroundColor = HXColor(0xff766e)
-            basicView.addSubview(smallView)
-            
-            let smalllb:UILabel = creatLabel(CGRect.zero, smallTitles[i], fontRegular(12), .white)
-            smalllb.backgroundColor = .clear
-            basicView.addSubview(smalllb)
-            
-            let smallBtn:SecureLoadingLabel = SecureLoadingLabel()
-            smallBtn.text = detailsTitle[i]
-            smallBtn.isSecureText = false
-            smallBtn.font = fontRegular(14)
-            smallBtn.textColor = HXColor(0xb5b5b5)
-            smallBtn.addTarget(self, action: #selector(changeContent(button:)), for: .touchUpInside)
-            
-            basicView.addSubview(smallBtn)
-            
-            let bigBtn:SecureLoadingLabel = SecureLoadingLabel()
-            bigBtn.text = tiitles[i]
-            bigBtn.isSecureText = false
-            bigBtn.font = fontRegular(14)
-            bigBtn.textColor = HXColor(0xb5b5b5)
-            bigBtn.addTarget(self, action: #selector(changeCreditAndRate(button:)), for: .touchUpInside)
-            basicView.addSubview(bigBtn)
-            
-            if i == 0 {
-                bigBtn.textColor = Main_TextColor
-                bigBtn.font = fontNumber(20)
-                bigBtn.textAlignment = .left
-                
-                creditMonthBtn = smallBtn
-                creditMoneyBtn = bigBtn
-                creditView = basicView
-                
-            }else{
-                let richText = NSAttributedString.makeAttributedString(components: [
-                    .init(text: tiitles[i], color: Main_TextColor, font: fontRegular(14)),
-                    .init(text: "\(myUser?.annualInterestRate ?? 3.05)%", color: HXColor(0xffa862), font: fontRegular(14))
-                ])
-                bigBtn.attributedText = richText
-                loanMoneyBtn = smallBtn
-                loanRateBtn = bigBtn
-                loanView = basicView
-            }
-            
-            
-            basicView.snp.makeConstraints { make in
-                make.left.equalToSuperview().offset(15 + (wide + 10)*Double(i))
-                make.height.equalTo(120)
-                make.width.equalTo(wide)
-                make.top.equalTo(monthView.snp.bottom).offset(15)
-            }
-            
-            titlelb.snp.makeConstraints { make in
-                make.top.equalToSuperview().offset(20)
-                make.left.equalToSuperview().offset(15)
-                make.height.equalTo(20)
-            }
-            
-            smalllb.snp.makeConstraints { make in
-                make.centerY.equalTo(titlelb)
-                make.left.equalTo(titlelb.snp.right).offset(10)
-            }
-            
-            smallView.snp.makeConstraints { make in
-                make.left.equalTo(smalllb).offset(-3)
-                make.right.equalTo(smalllb).offset(3)
-                make.top.equalTo(smalllb).offset(-1)
-                make.bottom.equalTo(smalllb)
-            }
-            
-            smallBtn.snp.makeConstraints { make in
-                make.left.equalTo(titlelb)
-                make.height.equalTo(30)
-                make.top.equalTo(titlelb.snp.bottom).offset(5)
-            }
-            
-            bigBtn.snp.makeConstraints { make in
-                make.left.equalTo(titlelb)
-                make.height.equalTo(35)
-                make.top.equalTo(smallBtn.snp.bottom)
-            }
-            
-            basicView.layoutIfNeeded()
-            ViewRadius(basicView, 10)
-            SetCornersAndBorder(smallView, radius: 5.5, corners: [.topLeft,.topRight,.bottomRight])
-        }
-    }
-    
-    //五险一金
-    func addProvidentFundView(){
-        providentFundView.backgroundColor = .white
-        contentView.addSubview(providentFundView)
-
-        let titlelb = creatLabel(CGRect.zero, "五险一金", fontMedium(16), Main_TextColor)
-        providentFundView.addSubview(titlelb)
-        
-        yuefenBtn = creatButton(CGRect.zero, "\(myUser?.providentUpdateTime ?? "08-01") 余额", fontRegular(14), HXColor(0x808080), .clear, self, #selector(changeMonth))
-        providentFundView.addSubview(yuefenBtn)
-        
-        let shebaolb = creatLabel(CGRect.zero, "社保", fontRegular(14), Main_TextColor)
-        shebaolb.textAlignment = .center
-        providentFundView.addSubview(shebaolb)
-        
-        let shebaoline:UIView = UIView()
-        shebaoline.backgroundColor = HXColor(0xf0effc)
-        providentFundView.insertSubview(shebaoline, at: 0)
-        
-        let chaxunlb = creatLabel(CGRect.zero, "查询", fontRegular(14), HXColor(0x5995ef))
-        chaxunlb.textAlignment = .center
-        providentFundView.addSubview(chaxunlb)
-        
-        let totallb = creatLabel(CGRect.zero, "医保", fontRegular(14), Main_TextColor)
-        totallb.textAlignment = .center
-        providentFundView.addSubview(totallb)
-        
-        let totalline:UIView = UIView()
-        totalline.backgroundColor = HXColor(0xf0effc)
-        providentFundView.insertSubview(totalline, at: 0)
-        
-        yibaoBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.medicalInsurance ?? 0.00))
-        yibaoBtn.isSecureText = false
-        yibaoBtn.font = fontNumber(14, .regular)//fontRegular(14)
-        yibaoBtn.textColor = Main_TextColor
-        yibaoBtn.addTarget(self, action: #selector(changeMyyibao), for: .touchUpInside)
-        providentFundView.addSubview(yibaoBtn)
-        
-        let incomelb = creatLabel(CGRect.zero, "住房公积金", fontRegular(14), Main_TextColor)
-        incomelb.textAlignment = .center
-        providentFundView.addSubview(incomelb)
-        
-        let incomeline:UIView = UIView()
-        incomeline.backgroundColor = HXColor(0xf0effc)
-        providentFundView.insertSubview(incomeline, at: 0)
-        
-        gongjijinBtn.text = String(format: "¥ %@", getNumberFormatter(myUser?.providentFund ?? 0.00))
-        gongjijinBtn.isSecureText = false
-        gongjijinBtn.font = fontNumber(14, .regular)//fontRegular(14)
-        gongjijinBtn.textColor = Main_TextColor
-        gongjijinBtn.addTarget(self, action: #selector(changeMygongjijin), for: .touchUpInside)
-        providentFundView.addSubview(gongjijinBtn)
-        
-        let bottomView:UIView = UIView()
-        bottomView.backgroundColor = ColorF5F5F5
-        providentFundView.addSubview(bottomView)
-        
-        let bottomlb = creatLabel(CGRect.zero, "小招", fontMedium(14), Main_TextColor)
-        bottomView.addSubview(bottomlb)
-        
-        let bottomDetaillb = creatLabel(CGRect.zero, "交了社保，还要自己准备养老钱吗?", fontRegular(14), HXColor(0x808080))
-        bottomView.addSubview(bottomDetaillb)
-        
-        providentFundView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(15)
-            make.top.equalTo(creditView.snp.bottom).offset(15)
-            make.height.equalTo(190)
-        }
-        
-        titlelb.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
+        banklb!.snp.makeConstraints { make in
+            make.height.equalTo(20)
             make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
+            make.top.equalToSuperview().offset(20)
         }
         
-        yuefenBtn.snp.makeConstraints { make in
-            make.centerY.equalTo(titlelb)
-            make.right.equalToSuperview().offset(-15)
-            make.height.equalTo(20)
+        let rightimg:UIImageView = UIImageView(image: UIImage(named: "my_right_black") ?? UIImage())
+        branchView?.addSubview(rightimg)
+        
+        rightimg.snp.makeConstraints { make in
+            make.height.width.equalTo(8)
+            make.left.equalTo(banklb!.snp.right).offset(2)
+            make.centerY.equalTo(banklb!)
         }
         
-        shebaolb.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(titlelb.snp.bottom).offset(25)
-            make.height.equalTo(16)
-            make.width.equalTo(100)
+        distancelb = creatLabel(CGRect.zero, "距离 10km", fontRegular(14), Main_TextColor)
+        branchView?.addSubview(distancelb!)
+        
+        distancelb!.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(15)
+            make.bottom.equalToSuperview().offset(-50)
         }
         
-        shebaoline.snp.makeConstraints { make in
-            make.centerX.equalTo(shebaolb)
-            make.height.equalTo(8)
-            make.width.equalTo(28)
-            make.top.equalTo(shebaolb.snp.bottom).offset(-4)
+        let nearbylb:UILabel = creatLabel(CGRect.zero, " 离你最近  ", fontRegular(14), Main_TextColor)
+        nearbylb.backgroundColor = .white
+        nearbylb.textAlignment = .center
+        branchView?.addSubview(nearbylb)
+        
+        nearbylb.snp.makeConstraints { make in
+            make.height.equalTo(22)
+            make.left.equalTo(distancelb!.snp.right).offset(5)
+            make.centerY.equalTo(distancelb!)
         }
         
-        chaxunlb.snp.makeConstraints { make in
-            make.centerX.equalTo(shebaolb)
-            make.height.equalTo(35)
-            make.top.equalTo(shebaolb.snp.bottom)
-        }
+        locBanklb = creatLabel(CGRect.zero, "中国北京机场***********************************商铺单元", fontRegular(14), Main_TextColor)
+        locBanklb!.numberOfLines = 0
+        branchView?.addSubview(locBanklb!)
         
-        totallb.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.right.equalTo(shebaolb.snp.left)
-            make.height.top.equalTo(shebaolb)
-        }
-        
-        totalline.snp.makeConstraints { make in
-            make.centerX.equalTo(totallb)
-            make.width.equalTo(28)
-            make.top.height.equalTo(shebaoline)
-        }
-        
-        yibaoBtn.snp.makeConstraints { make in
-            make.centerX.width.equalTo(totallb)
-            make.height.equalTo(chaxunlb)
-            make.top.equalTo(totallb.snp.bottom)
-        }
-        
-        incomelb.snp.makeConstraints { make in
-            make.left.equalTo(shebaolb.snp.right)
-            make.right.equalToSuperview()
-            make.height.top.equalTo(shebaolb)
-        }
-        
-        incomeline.snp.makeConstraints { make in
-            make.centerX.equalTo(incomelb)
-            make.width.equalTo(70)
-            make.top.height.equalTo(shebaoline)
-        }
-        
-        gongjijinBtn.snp.makeConstraints { make in
-            make.centerX.width.equalTo(incomelb)
-            make.height.equalTo(chaxunlb)
-            make.top.equalTo(incomelb.snp.bottom)
-        }
-        
-        bottomView.snp.makeConstraints { make in
+        locBanklb!.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(15)
-            make.height.equalTo(42)
-            make.bottom.equalToSuperview().offset(-20)
+            make.top.equalTo(banklb!.snp.bottom).offset(10)
         }
         
-        bottomlb.snp.makeConstraints { make in
-            make.left.equalToSuperview().inset(15)
-            make.centerY.equalToSuperview()
-            make.height.equalTo(20)
-        }
-        
-        bottomDetaillb.snp.makeConstraints { make in
-            make.left.equalTo(bottomlb.snp.right).offset(15)
-            make.centerY.equalToSuperview()
-            make.height.equalTo(20)
-        }
-        
-        ViewRadius(providentFundView, 10)
-        ViewRadius(bottomView, 10)
+        ViewRadius(nearbylb, 4)
     }
     
-    //底部图片
+    //MARK: - 底部图片
     func addBottomView(){
+        var y:CGFloat = 8
+
+        let titles:Array<String> = ["我的网点","更多服务"]
+        let details:Array<String> = ["查看网点 就近办理",""]
+
         
-        let images:Array = ["my1","my2","my3"]
+        let images:Array = ["my_loc_card","my_bottom"]
         
-        var y:CGFloat = 15
         for (i, icon) in images.enumerated() {
+            let titlelb:UILabel = creatLabel(CGRect.zero, titles[i], fontSemibold(18), Main_TextColor)
+            titlelb.textAlignment = .left
+            contentView.addSubview(titlelb)
+            
+            
+            let rightImageV:UIImageView = UIImageView(image: UIImage(named: "my_right"))
+            contentView.addSubview(rightImageV)
+            
+            let detaillb:UILabel = creatLabel(CGRect.zero, details[i], fontRegular(14), Main_detailColor)
+            detaillb.textAlignment = .right
+            contentView.addSubview(detaillb)
+            
+            if details[i].count == 0 {
+                detaillb.isHidden = true
+                rightImageV.isHidden = true
+            }
+            
             let image:UIImage = UIImage(named: icon) ?? UIImage()
             
             let imageV:UIImageView = UIImageView()
             imageV.image = image
             
             let high:CGFloat = (SCREEN_WDITH - 30) * (image.size.height/image.size.width)
-            
             contentView.addSubview(imageV)
             
+            titlelb.snp.makeConstraints { make in
+                make.left.equalToSuperview().inset(15)
+                make.top.equalTo(monthView.snp.bottom).offset(y)
+                make.height.equalTo(42)
+            }
+            
+            rightImageV.snp.makeConstraints { make in
+                make.right.equalToSuperview().inset(15)
+                make.centerY.equalTo(titlelb)
+                make.width.height.equalTo(14)
+            }
+            
+            detaillb.snp.makeConstraints { make in
+                make.right.equalTo(rightImageV.snp.left)
+                make.centerY.equalTo(titlelb)
+            }
+    
             imageV.snp.makeConstraints { make in
-                make.left.right.equalToSuperview().inset(15)
-                make.top.equalTo(providentFundView.snp.bottom).offset(y)
+                make.left.right.equalToSuperview().inset((i == images.count - 1) ? 0:15)
+                make.top.equalTo(titlelb.snp.bottom)
                 make.height.equalTo(high)
             }
-            
-            y = y + high + 15
-            
-            if i == images.count - 1 {
-                contentView.snp.makeConstraints { make in
-                    make.bottom.equalTo(imageV.snp.bottom)
-                }
+
+            if i == 0 {
+                branchView = imageV
             }
+            y+=(high + 50)
+        }
+        
+        let bottomView:UIView = UIView()
+        bottomView.backgroundColor = Main_backgroundColor
+        contentView.addSubview(bottomView)
+        
+        bottomView.snp.makeConstraints { make in
+            make.right.left.equalToSuperview()
+            make.height.equalTo(200)
+            make.top.equalTo(monthView.snp.bottom).offset(y - 10)
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.bottom.equalTo(bottomView.snp.bottom).offset(-150)
         }
     }
     
-    @objc func changeMygongjijin(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "公积金")
-        fieldview.type = .amountType
-        KWindow?.addSubview(fieldview)
+    @objc func setCards(){
         
-        fieldview.changeContent = { text in
-            self.gongjijinBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-            myUser?.providentFund = Double(text) ?? 0.00
-            UserManager.shared.update { user in
-                user.providentFund = Double(text) ?? 0.00
-            }
-        }
-    }
-    
-    @objc func changeMyyibao(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "医保")
-        fieldview.type = .amountType
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-            self.yibaoBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-            myUser?.medicalInsurance = Double(text) ?? 0.00
-            UserManager.shared.update { user in
-                user.medicalInsurance = Double(text) ?? 0.00
-            }
-        }
-    }
-    
-    @objc func changeMonth(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "医保时间")
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-            self.yuefenBtn.setTitle(text + " 余额", for: .normal)
-            myUser?.providentUpdateTime = text
-            UserManager.shared.update { user in
-                user.providentUpdateTime = text
-            }
-        }
-    }
-    
-    @objc func changeMyIncome(){
-        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-        fieldview.setContent(str: "昨日收益")
-        fieldview.type = .revenueType
-        KWindow?.addSubview(fieldview)
-        
-        fieldview.changeContent = { text in
-//            String(format: "¥ %@", getNumberFormatter(myUser?.myBalance ?? 0.00))
-            self.incomeBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-            myUser?.myIncome = Double(text) ?? 0.00
-            UserManager.shared.update { user in
-                user.myIncome = Double(text) ?? 0.00
-            }
-            //通知更新
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: changeMyIncomeNotificationName), object: text)
-        }
     }
     
     @objc func changeMyMoney(){
         let ctrl:MyAmountCtrl = MyAmountCtrl()
         ctrl.enableLazyLoad = true
         self.navigationController?.pushViewController(ctrl, animated: true)
-//        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-//        fieldview.setContent(str: "总资产")
-//        fieldview.type = .amountType
-//        KWindow?.addSubview(fieldview)
-//        
-//        fieldview.changeContent = { text in
-////            String(format: "¥ %@", getNumberFormatter(myUser?.myBalance ?? 0.00))
-//            self.moneyBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-//            myUser?.myBalance = Double(text) ?? 0.00
-//            UserManager.shared.update { user in
-//                user.myBalance = Double(text) ?? 0.00
-//            }
-//            //通知更新
-//            NotificationCenter.default.post(name: NSNotification.Name(rawValue: changeMyBalanceNotificationName), object: text)
-//        }
     }
     
     @objc func showMoney(button:UIButton){
         button.isSelected = !button.isSelected
         if button.isSelected {
-            showImage.image = UIImage(named: "hideMoney")
+            showImage.image = UIImage(named: "caifu_hide")
         }else{
-            showImage.image = UIImage(named: "showMoney")
+            showImage.image = UIImage(named: "caifu_show")
         }
         incomeMoneyBtn.isSecureText = button.isSelected
         expenditureMoneyBtn.isSecureText = button.isSelected
         
         moneyBtn.isSecureText = button.isSelected
         incomeBtn.isSecureText = button.isSelected
-        
-        creditMoneyBtn.isSecureText = button.isSelected
-        
-        yibaoBtn.isSecureText = button.isSelected
-        gongjijinBtn.isSecureText = button.isSelected
     }
     
     @objc func changeMonthIncome(){
         let ctrl:TradeRecordListCtrl = TradeRecordListCtrl()
         ctrl.enableLazyLoad = true
         self.navigationController?.pushViewController(ctrl, animated: true)
-//        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-//        fieldview.setContent(str: "本月支出")
-//        fieldview.type = .amountType
-//        KWindow?.addSubview(fieldview)
-//        
-//        fieldview.changeContent = { text in
-////            String(format: "¥ %@", getNumberFormatter(myUser?.myBalance ?? 0.00))
-//            self.incomeMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-//            myUser?.myMonthCost = Double(text) ?? 0.00
-//            UserManager.shared.update { user in
-//                user.myMonthCost = Double(text) ?? 0.00
-//            }
-//            self.uploadPercentageLineView()
-//        }
     }
     
     @objc func changeMyExpenses(){
         let ctrl:TradeRecordListCtrl = TradeRecordListCtrl()
         ctrl.enableLazyLoad = true
         self.navigationController?.pushViewController(ctrl, animated: true)
-//        let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-//        fieldview.setContent(str: "本月收入")
-//        fieldview.type = .amountType
-//        KWindow?.addSubview(fieldview)
-//        
-//        fieldview.changeContent = { text in
-//            self.expenditureMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-//            myUser?.myMonthIncome = Double(text) ?? 0.00
-//            UserManager.shared.update { user in
-//                user.myMonthIncome = Double(text) ?? 0.00
-//            }
-//            self.uploadPercentageLineView()
-//        }
     }
-    
-    
-    @objc func changeContent(button:SecureLoadingLabel){
-        if button == creditMonthBtn {
-            let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-            fieldview.setContent(str: "出账日期")
-            KWindow?.addSubview(fieldview)
-            
-            fieldview.changeContent = { text in
-                self.creditMonthBtn.text =  text + "出账"
-                myUser?.billingDate = text
-                UserManager.shared.update { user in
-                    user.billingDate = text
-                }
-            }
-        }else{
-            let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-            fieldview.setContent(str: "最高可借")
-            fieldview.type = .integerType
-            KWindow?.addSubview(fieldview)
-            
-            fieldview.changeContent = { text in
-                self.loanMoneyBtn.text =  "最高可借 \(text) 万"
-                myUser?.loanAmount = Int(text) ?? 10
-                UserManager.shared.update { user in
-                    user.loanAmount = Int(text) ?? 10
-                }
-            }
-        }
-    }
-    
-    //消费 利率
-    @objc func changeCreditAndRate(button:SecureLoadingLabel){
-        if button == creditMoneyBtn {
-            print("修改信用卡消费记录")
-            let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-            fieldview.setContent(str: "信用卡消费")
-            fieldview.type = .amountType
-            KWindow?.addSubview(fieldview)
-            
-            fieldview.changeContent = { text in
-                self.creditMoneyBtn.text = String(format: "¥ %@", getNumberFormatter(Double(text) ?? 0.00))
-                myUser?.creditCardSpending = Double(text) ?? 0.00
-                UserManager.shared.update { user in
-                    user.creditCardSpending = Double(text) ?? 0.00
-                }
-            }
-        }else{
-            let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
-            fieldview.setContent(str: "年利率")
-            fieldview.type = .amountType
-            KWindow?.addSubview(fieldview)
-            
-            fieldview.changeContent = { text in
-                let richText = NSAttributedString.makeAttributedString(components: [
-                    .init(text:"年利率(单利)低至", color: Main_TextColor, font: fontRegular(14)),
-                    .init(text: "\(text)%", color: HXColor(0xffa862), font: fontRegular(14))
-                ])
-                
-                self.loanRateBtn.attributedText =  richText
-                myUser?.annualInterestRate = Double(text) ?? 1.00
-                UserManager.shared.update { user in
-                    user.annualInterestRate = Double(text) ?? 1.00
-                }
-            }
-        }
-    }
-    
     
     @objc func changeName(){
         let fieldview:BasicFieldView = BasicFieldView.init(frame: KWindow?.bounds ?? CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
