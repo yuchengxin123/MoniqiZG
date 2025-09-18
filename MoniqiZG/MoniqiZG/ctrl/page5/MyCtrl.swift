@@ -717,43 +717,44 @@ class MyCtrl: BaseCtrl,UIScrollViewDelegate {
         banklb!.snp.makeConstraints { make in
             make.height.equalTo(20)
             make.left.equalToSuperview().offset(15)
-            make.top.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(18)
         }
         
         let rightimg:UIImageView = UIImageView(image: UIImage(named: "my_right_black") ?? UIImage())
         branchView?.addSubview(rightimg)
         
         rightimg.snp.makeConstraints { make in
-            make.height.width.equalTo(8)
+            make.height.width.equalTo(12)
             make.left.equalTo(banklb!.snp.right).offset(2)
             make.centerY.equalTo(banklb!)
         }
         
-        distancelb = creatLabel(CGRect.zero, "距离 10km", fontRegular(14), Main_TextColor)
+        distancelb = creatLabel(CGRect.zero, "距离 10km", fontRegular(12), Main_TextColor)
         branchView?.addSubview(distancelb!)
         
         distancelb!.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(15)
-            make.bottom.equalToSuperview().offset(-50)
+            make.bottom.equalToSuperview().offset(-46)
         }
         
-        let nearbylb:UILabel = creatLabel(CGRect.zero, " 离你最近  ", fontRegular(14), Main_TextColor)
+        let nearbylb:UILabel = creatLabel(CGRect.zero, " 离你最近  ", fontRegular(12), Main_TextColor)
         nearbylb.backgroundColor = .white
         nearbylb.textAlignment = .center
         branchView?.addSubview(nearbylb)
         
         nearbylb.snp.makeConstraints { make in
-            make.height.equalTo(22)
+            make.height.equalTo(20)
             make.left.equalTo(distancelb!.snp.right).offset(5)
             make.centerY.equalTo(distancelb!)
         }
         
-        locBanklb = creatLabel(CGRect.zero, "中国北京机场***********************************商铺单元", fontRegular(14), Main_TextColor)
-        locBanklb!.numberOfLines = 0
+        locBanklb = creatLabel(CGRect.zero, "中国北京机场***********************************商铺单元", fontRegular(14), Main_detailColor)
+        locBanklb!.numberOfLines = 2
         branchView?.addSubview(locBanklb!)
         
         locBanklb!.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(15)
+            make.left.equalToSuperview().inset(15)
+            make.width.equalToSuperview().multipliedBy(0.6)
             make.top.equalTo(banklb!.snp.bottom).offset(10)
         }
         

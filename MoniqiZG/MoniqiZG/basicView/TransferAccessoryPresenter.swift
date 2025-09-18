@@ -19,7 +19,7 @@ class TransferAccessoryView: UIView {
     private(set) var textView: UITextView = UITextView()
     
     private let placeholderLabel: UILabel = {
-        let l = creatLabel(CGRect.zero, "请填写转账附言，收款双方可见，若不填写默认为“转账”", fontRegular(16), fieldPlaceholderColor)
+        let l = creatLabel(CGRect.zero, "选填", fontRegular(16), fieldPlaceholderColor)
         l.numberOfLines = 0
         return l
     }()
@@ -33,7 +33,7 @@ class TransferAccessoryView: UIView {
     private var tags: [String] = []
 
     // 固定高度（可按需调整或改成动态高度）
-    static let defaultHeight: CGFloat = 270
+    static let defaultHeight: CGFloat = 350
 
     // MARK: - Init
     init(tags: [String], initialText: String? = nil) {
@@ -52,91 +52,127 @@ class TransferAccessoryView: UIView {
     private func setupUI() {
         backgroundColor = .white
 
-        cancelBtn = creatButton(CGRect.zero, "取消", fontRegular(16), HXColor(0x808080), .white, self, #selector(cancelAction))
+        cancelBtn = creatButton(CGRect.zero, "取消", fontMedium(16), Main_Color, .white, self, #selector(cancelAction))
         
-        confirmBtn = creatButton(CGRect.zero, "确定", fontRegular(16), HXColor(0x5995ef), .white, self, #selector(confirmAction))
+        confirmBtn = creatButton(CGRect.zero, "确定", fontMedium(16), .white, Main_Color, self, #selector(confirmAction))
         
         addSubview(cancelBtn!)
         addSubview(confirmBtn!)
         
         cancelBtn!.snp.makeConstraints { make in
             make.left.equalToSuperview()
-            make.top.equalToSuperview().offset(10)
-            make.height.equalTo(50)
-            make.width.equalTo(70)
+            make.bottom.equalToSuperview()
+            make.height.equalTo(48)
+            make.width.equalToSuperview().multipliedBy(0.5)
         }
         
         confirmBtn!.snp.makeConstraints { make in
             make.right.equalToSuperview()
-            make.top.equalToSuperview().offset(10)
-            make.height.equalTo(50)
-            make.width.equalTo(70)
+            make.bottom.equalToSuperview()
+            make.height.equalTo(48)
+            make.width.equalToSuperview().multipliedBy(0.5)
         }
 
+        let titlelb:UILabel = creatLabel(CGRect.zero, "附言", fontMedium(16), Main_TextColor)
+        titlelb.textAlignment = .center
+        addSubview(titlelb)
+        
+        titlelb.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(15)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(20)
+        }
+        
+        var line:UIView = UIView()
+        line.backgroundColor = Main_LineColor
+        addSubview(line)
+        
+        line.snp.makeConstraints { make in
+            make.top.equalTo(titlelb.snp.bottom).offset(15)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(1)
+        }
+        
         let bgView = UIView()
-        bgView.backgroundColor = .white
+        bgView.backgroundColor = Main_backgroundColor
         addSubview(bgView)
         
         bgView.snp.makeConstraints { make in
-            make.top.equalTo(cancelBtn!.snp.bottom).offset(10)
+            make.top.equalTo(line.snp.bottom).offset(15)
             make.left.right.equalToSuperview().inset(15)
-            make.height.equalTo(80)
+            make.height.equalTo(120)
         }
         
+        line = UIView()
+        line.backgroundColor = Main_LineColor
+        addSubview(line)
+        
+        line.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-47.5)
+            make.left.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.5)
+            make.height.equalTo(0.5)
+        }
+
         // textView (内部可编辑区域)
         textView.font = fontRegular(14)
         textView.isScrollEnabled = true
         textView.delegate = self
-        textView.backgroundColor = .white
+        textView.backgroundColor = Main_backgroundColor
         textView.textColor = Main_TextColor
         bgView.addSubview(textView)
         textView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8)
-            make.left.right.equalToSuperview().inset(15)
+            make.left.right.equalToSuperview().inset(6)
         }
 
         // placeholder inside textView
         bgView.addSubview(placeholderLabel)
         placeholderLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(15)
-            make.left.right.equalToSuperview().inset(18)
+            make.left.right.equalToSuperview().inset(10)
         }
 
         // tag container (flow)
         addSubview(tagContainer)
         tagContainer.snp.makeConstraints { make in
-            make.top.equalTo(bgView.snp.bottom).offset(20)
+            make.top.equalTo(bgView.snp.bottom).offset(10)
             make.left.right.equalToSuperview().inset(15)
-            make.bottom.equalToSuperview().inset(15)
+            make.bottom.equalTo(confirmBtn!.snp.top).offset(-10)
         }
-        //51  *  2 + 15
-        // add tags as buttons
-        let columns = 3
-        let spacing: CGFloat = 15
-        let tagHeight: CGFloat = 36
+
+        let spacing: CGFloat = 12
+        let tagHeight: CGFloat = 34
         
-        let totalSpacing = spacing * CGFloat(columns - 1)
-        let tagWidth = (SCREEN_WDITH - 30 - totalSpacing) / CGFloat(columns)
+        var x:CGFloat = 0
+        var y:CGFloat = 0
         
         for (index,tag) in tags.enumerated() {
-            let btn = creatButton(CGRect.zero, tag, fontRegular(15), Main_TextColor, HXColor(0xf7f7f7), self, #selector(tagTapped(_:)))
+            let tagWidth = sizeWide(fontRegular(14), tag) + 26
+            
+            let btn = creatButton(CGRect.zero, tag, fontRegular(14), Main_detailColor, .white, self, #selector(tagTapped(_:)))
             tagContainer.addSubview(btn)
             
-            ViewRadius(btn, tagHeight/2.0)
+            ViewBorderRadius(btn, tagHeight/2.0, 1, HXColor(0xcccccc))
             
-            let row = index / columns
-            let col = index % columns
+            if (x + tagWidth + spacing)  > (SCREEN_WDITH - 60){
+                x = 0
+                y+=(tagHeight + spacing)
+            }
             
             btn.snp.makeConstraints { make in
-                make.top.equalToSuperview().offset(CGFloat(row) * (tagHeight + spacing))
-                make.left.equalToSuperview().offset(CGFloat(col) * (tagWidth + spacing))
+                make.top.equalToSuperview().offset(y)
+                make.left.equalToSuperview().offset(x)
                 make.width.equalTo(tagWidth)
                 make.height.equalTo(tagHeight)
             }
+            x+=(tagWidth + spacing)
         }
         
-        ViewBorderRadius(bgView, 4, 1, HXColor(0xeeeeee))
-
+        ViewRadius(bgView, 4)
+        
+        ViewRadius(self, 4)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(textViewDidChangeNotification(_:)), name: UITextView.textDidChangeNotification, object: textView)
     }
     
@@ -222,7 +258,7 @@ class TransferAccessoryPresenter {
         self.hostResponder = hostResponder
 
         let bg:UIView = UIView()
-        bg.backgroundColor = .black.withAlphaComponent(0.2)
+        bg.backgroundColor = .black.withAlphaComponent(0.4)
         window.addSubview(bg)
         
         bg.snp.makeConstraints { make in
@@ -230,7 +266,6 @@ class TransferAccessoryPresenter {
         }
         
         let v = TransferAccessoryView(tags: tags, initialText: initialText)
-        setRadius(v, 10, [.layerMinXMinYCorner, .layerMaxXMinYCorner])
 
         v.onConfirm = { [weak self] text in
             onConfirm?(text)
@@ -245,7 +280,7 @@ class TransferAccessoryPresenter {
         
         let h = TransferAccessoryView.defaultHeight
         v.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
+            make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(h)
             // 初始放到屏幕下方（offset = h）
             self.bottomConstraint = make.bottom.equalTo(window.snp.bottom).offset(h).constraint
@@ -266,6 +301,8 @@ class TransferAccessoryPresenter {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             v.textView.becomeFirstResponder()
         }
+        
+        ViewRadius(v, 4)
     }
 
     @objc private func keyboardWillChangeFrame(_ n: Notification) {
@@ -276,7 +313,7 @@ class TransferAccessoryPresenter {
 
         let keyboardHeight = window.bounds.height - endFrame.origin.y
 
-        bottomConstraint?.update(offset: -keyboardHeight)
+        bottomConstraint?.update(offset: -keyboardHeight - 40)
 
         UIView.animate(withDuration: duration) {
             window.layoutIfNeeded()

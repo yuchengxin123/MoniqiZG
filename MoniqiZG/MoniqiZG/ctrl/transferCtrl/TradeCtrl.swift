@@ -22,13 +22,16 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     let payCard:CardModel = myCardList.first ?? CardModel()
     
     let topView:UIView = UIView()
-    let bottomView:UIView = UIView()
+    let transferView:UIView = UIView()
+    let receiveView:UIView = UIView()
+    let paymentMethodView:UIView = UIView()
+    
+    let customSwitch = CustomSwitch()
     
     private var cardField:UITextField?
     private var nameField:UITextField?
     private var moneyField:UITextField?
-    private let moneyRemindImg:UIImageView = UIImageView.init(image: UIImage(named: "money_bottom"))
-    private let moneyRemindlb:UILabel = creatLabel(CGRect.zero, "", fontRegular(10), .white)
+    private let moneyRemindlb:UILabel = creatLabel(CGRect.zero, "", fontRegular(10), HXColor(0xbebebe))
     
     private let banklb:UILabel = UILabel()
     private let cardlb:UILabel = UILabel()
@@ -36,7 +39,6 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     
     private let tansBanklb:UILabel = UILabel()
     private let balancelb:UILabel = UILabel()
-//    private let transferRemindlb:UILabel = UILabel()
     private var remindField:UITextField?
     
     var banktype:String = "bank_type_7"
@@ -73,7 +75,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
 
     func addHeadView(){
         let headView:UIView = UIView()
-        headView.backgroundColor = Main_backgroundColor
+        headView.backgroundColor = .white
         view.addSubview(headView)
         
         headView.snp.makeConstraints { make in
@@ -86,25 +88,14 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         leftImg.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-15)
-            make.width.equalTo(12)
-            make.height.equalTo(20.5)
-        }
-      
-        let rightImg:UIImageView = UIImageView(image: UIImage(named: "more_black"))
-        headView.addSubview(rightImg)
-        
-        rightImg.snp.makeConstraints { make in
-            make.right.equalToSuperview().inset(20)
-            make.centerY.equalTo(leftImg)
-            make.width.equalTo(19)
-            make.height.equalTo(4)
+            make.width.height.equalTo(24)
         }
         
         let infoImg:UIImageView = UIImageView(image: UIImage(named: "face_right"))
         headView.addSubview(infoImg)
         
         infoImg.snp.makeConstraints { make in
-            make.right.equalTo(rightImg.snp.left).offset(-20)
+            make.right.equalToSuperview().inset(20)
             make.centerY.equalTo(leftImg)
             make.height.width.equalTo(22)
         }
@@ -119,7 +110,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             make.width.equalTo(80)
         }
         
-        let titlelb:UILabel = creatLabel(CGRect.zero, "转账", fontRegular(19), Main_TextColor)
+        let titlelb:UILabel = creatLabel(CGRect.zero, "账号转账", fontMedium(18), Main_TextColor)
         titlelb.textAlignment = .center
         headView.addSubview(titlelb)
         
@@ -134,9 +125,17 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     func addView(){
         contentView.backgroundColor = Main_backgroundColor
         
+        topView.backgroundColor = Main_backgroundColor
         contentView.addSubview(topView)
         
-        contentView.addSubview(bottomView)
+        transferView.backgroundColor = .white
+        contentView.addSubview(transferView)
+        
+        receiveView.backgroundColor = .white
+        contentView.addSubview(receiveView)
+        
+        paymentMethodView.backgroundColor = .white
+        contentView.addSubview(paymentMethodView)
         
         let img:UIImage = UIImage(named: "transfer_bottom") ?? UIImage()
         let high:CGFloat = img.size.height/img.size.width * SCREEN_WDITH
@@ -157,21 +156,30 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         topView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(navigationHeight)
             make.left.right.equalToSuperview()
-            if oldModel != nil && isIncome == false {
-                make.height.equalTo(130)
-            }else{
-                make.height.equalTo(260)
-            }
+            make.height.equalTo(90)
         }
         
-        bottomView.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom).offset(10)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(276)
+        transferView.snp.makeConstraints { make in
+            make.top.equalTo(topView.snp.bottom).offset(20)
+            make.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(170)
         }
+        
+        receiveView.snp.makeConstraints { make in
+            make.top.equalTo(transferView.snp.bottom).offset(10)
+            make.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(150)
+        }
+        
+        paymentMethodView.snp.makeConstraints { make in
+            make.top.equalTo(receiveView.snp.bottom).offset(10)
+            make.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(150)
+        }
+        
         
         bottomImg.snp.makeConstraints { make in
-            make.top.equalTo(bottomView.snp.bottom)
+            make.top.equalTo(paymentMethodView.snp.bottom)
             make.left.right.equalToSuperview()
             make.height.equalTo(high)
         }
@@ -183,11 +191,17 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         }
         
         addTopView()
-        addBottomView()
+        addTransferView()
+        addReceiveView()
+        addPaymentMethodView()
         
         contentView.snp.makeConstraints { make in
             make.bottom.equalTo(bottomImg.snp.bottom)
         }
+        
+        ViewRadius(transferView, 4)
+        ViewRadius(receiveView, 4)
+        ViewRadius(paymentMethodView, 4)
     }
     
     //MARK: - 确认转账
@@ -394,15 +408,6 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
                         ctrl.transferFail = self.transferFail
                         self.pushAndCloseCtrl(ctrl)
                         
-                        //去重
-//                        if !myPartnerList.contains(where: { $0.card == partner.card }) {
-//                            //添加并保存
-//                            myPartnerList.append(partner)
-//                            TransferPartner.saveArray(myPartnerList, forKey: MyTransferPartnerCards)
-//                        }
-                        
-                        //通知更新
-//                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: changeMyTransferNotificationName), object: nil)
                     }
                 }
             }
@@ -450,222 +455,316 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         }
     }
     
-    
+    //MARK: - 付款框
     func addTopView(){
-        topView.backgroundColor = .white
+        topView.backgroundColor = Main_backgroundColor
         
-        let namelb:UILabel = creatLabel(CGRect.zero, "收款人", fontMedium(18), Main_TextColor)
-        topView.addSubview(namelb)
+        let cardView:UIView = UIView()
+        cardView.backgroundColor = .white
+        topView.addSubview(cardView)
         
-        if oldModel != nil && isIncome == false {
-            let bankimg:UIImageView = UIImageView()
-            bankimg.image = UIImage(named: oldModel!.icon)
-            topView.addSubview(bankimg)
-            
-            let oldNamelb:UILabel = creatLabel(CGRect.zero, oldModel!.name, fontRegular(16), Main_TextColor)
-            topView.addSubview(oldNamelb)
-            
-            let banklb:UILabel = creatLabel(CGRect.zero, "\(oldModel!.bankName)", fontRegular(15), fieldPlaceholderColor)
-            topView.addSubview(banklb)
-            
-            let cardlb:UILabel = creatLabel(CGRect.zero, "\(oldModel!.card)", fontRegular(15), Main_TextColor)
-            topView.addSubview(cardlb)
-            
-            namelb.snp.makeConstraints { make in
-                make.left.equalToSuperview().offset(15)
-                make.height.equalTo(20)
-                make.top.equalTo(20)
-            }
-            
-            bankimg.snp.makeConstraints { make in
-                make.left.equalToSuperview().offset(15)
-                make.height.width.equalTo(40)
-                make.top.equalTo(namelb.snp.bottom).offset(35)
-            }
-            
-            oldNamelb.snp.makeConstraints { make in
-                make.left.equalTo(bankimg.snp.right).offset(10)
-                make.height.equalTo(20)
-                make.top.equalTo(bankimg).offset(-2)
-            }
-            
-            banklb.snp.makeConstraints { make in
-                make.left.equalTo(oldNamelb.snp.right).offset(15)
-                make.height.equalTo(20)
-                make.centerY.equalTo(oldNamelb)
-            }
-            
-            cardlb.snp.makeConstraints { make in
-                make.left.equalTo(oldNamelb)
-                make.bottom.equalTo(bankimg).offset(2)
-            }
-            return
+        cardView.snp.makeConstraints { make in
+            make.top.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(50)
         }
         
-
-        let nameimg:UIImageView = UIImageView(image: UIImage(named: "transfer_pic"))
-        topView.addSubview(nameimg)
-        
-        let addresslb:UILabel = creatLabel(CGRect.zero, "户名", fontRegular(16), Main_TextColor)
-        topView.addSubview(addresslb)
-        addresslb.setContentHuggingPriority(.required, for: .horizontal) // 不被拉伸
-        addresslb.setContentCompressionResistancePriority(.required, for: .horizontal) // 不被压缩
-        
-        let addressimg:UIImageView = UIImageView(image: UIImage(named: "transfer_user"))
-        topView.addSubview(addressimg)
-        
-        nameField = createField(CGRect.zero, "请输入收款人户名", fontRegular(16), Main_TextColor, UIView(), UIView())
-        nameField?.textAlignment = .right
-        nameField?.delegate = self
-        topView.addSubview(nameField!)
-        
-        let line:UIView = UIView()
-        line.backgroundColor = defaultLineColor
-        topView.addSubview(line)
-        
-        let accountlb:UILabel = creatLabel(CGRect.zero, "账号", fontRegular(16), Main_TextColor)
-        topView.addSubview(accountlb)
-        accountlb.setContentHuggingPriority(.required, for: .horizontal) // 不被拉伸
-        accountlb.setContentCompressionResistancePriority(.required, for: .horizontal) // 不被压缩
-        
-        
-        let accountimg:UIImageView = UIImageView(image: UIImage(named: "transfer_scan"))
-        topView.addSubview(accountimg)
-        
-        cardField = createField(CGRect.zero, "卡号", fontRegular(16), Main_TextColor, UIView(), UIView())
-        cardField?.enableBankCardFormat()
-        cardField?.textAlignment = .right
-        cardField?.delegate = self
-        cardField?.keyboardType = .numberPad
-        cardField?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        contentView.addSubview(cardField!)
-        
-        let bankline:UIView = UIView()
-        bankline.backgroundColor = defaultLineColor
-        topView.addSubview(bankline)
-        
-        let bankremindlb:UILabel = creatLabel(CGRect.zero, "银行", fontRegular(16), Main_TextColor)
-        topView.addSubview(bankremindlb)
-        bankremindlb.setContentHuggingPriority(.required, for: .horizontal) // 不被拉伸
-        bankremindlb.setContentCompressionResistancePriority(.required, for: .horizontal) // 不被压缩
-        
-        
-        let bankrightimg:UIImageView =  UIImageView(image: UIImage(named: "gray_right"))
-        topView.addSubview(bankrightimg)
-        
-        banklb.text = "选择银行"
-        banklb.textColor = Main_detailColor
-        banklb.font = fontRegular(16)
-        banklb.textAlignment = .right
-        banklb.isUserInteractionEnabled = true
-        topView.addSubview(banklb)
-        
-        let button:UIButton = UIButton()
-        topView.addSubview(button)
-        button.addTarget(self, action: #selector(selectBank), for: .touchUpInside)
-        
-        if oldModel != nil {
-            nameField?.text = oldModel!.name
-            cardField?.text = oldModel!.card
-            banklb.text = oldModel!.bankName
-            banktype = oldModel!.icon
-            cardType = oldModel!.cardType
-            cardName = oldModel!.cardName
-        }
-        
+        let namelb:UILabel = creatLabel(CGRect.zero, "付款账户", fontMedium(16), Main_TextColor)
+        cardView.addSubview(namelb)
         
         namelb.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.top.equalTo(20)
+            make.centerY.equalToSuperview()
         }
         
-        nameimg.snp.makeConstraints { make in
+        let rightimg:UIImageView = UIImageView()
+        rightimg.image = UIImage(named: "trade_right_black")
+        cardView.addSubview(rightimg)
+        
+        rightimg.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
-            make.height.equalTo(30)
-            make.width.equalTo(88.2)
             make.centerY.equalTo(namelb)
+            make.width.height.equalTo(14)
         }
         
-        addresslb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
+        let cardlb:UILabel = creatLabel(CGRect.zero, "1111 ****** 2222", fontRegular(16), Color333333)
+        cardView.addSubview(cardlb)
+        
+        cardlb.snp.makeConstraints { make in
+            make.right.equalTo(rightimg.snp.left).offset(-3)
+            make.centerY.equalTo(rightimg)
             make.height.equalTo(20)
-            make.top.equalTo(namelb.snp.bottom).offset(48)
         }
         
-        addressimg.snp.makeConstraints { make in
+        let balancelb:UILabel = creatLabel(CGRect.zero, "可用余额", fontRegular(12), Main_detailColor)
+        topView.addSubview(balancelb)
+        
+        balancelb.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(20)
+            make.top.equalTo(cardView.snp.bottom).offset(10)
+        }
+        
+        let amountlb:UILabel = creatLabel(CGRect.zero, "人民币元 \(getNumberFormatter(myUser!.myBalance))", fontRegular(14), Main_Color)
+        topView.addSubview(amountlb)
+        
+        amountlb.snp.makeConstraints { make in
+            make.left.equalTo(balancelb.snp.right).offset(5)
+            make.centerY.equalTo(balancelb)
+        }
+        
+        let allbtn:UIButton = creatButton(CGRect.zero, " 全部转出 ", fontRegular(14), HXColor(0x2d70ed), .clear, self, #selector(transferOut))
+        topView.addSubview(allbtn)
+        
+        allbtn.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
-            make.height.width.equalTo(18)
-            make.centerY.equalTo(addresslb)
+            make.centerY.equalTo(balancelb)
+            make.height.equalTo(40)
         }
         
-        nameField!.snp.makeConstraints { make in
-            make.leading.equalTo(addresslb.snp.trailing).offset(5)
-            make.right.equalTo(addressimg.snp.left).offset(-10)
-            make.height.equalTo(40)
-            make.centerY.equalTo(addresslb)
+        ViewRadius(cardView, 4)
+    }
+    
+    //MARK: - 转账框
+    func addTransferView(){
+        let unitlb:UILabel = creatLabel(CGRect.zero, "币种", fontMedium(16), Main_TextColor)
+        transferView.addSubview(unitlb)
+        
+        unitlb.snp.makeConstraints { make in
+            make.top.left.equalToSuperview().offset(15)
+            make.height.equalTo(20)
         }
+        
+        let rightlb:UILabel = creatLabel(CGRect.zero, "人民币元", fontRegular(16), Main_detailColor)
+        transferView.addSubview(rightlb)
+        
+        rightlb.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-20)
+            make.centerY.equalTo(unitlb)
+        }
+        
+        let line:UIView = UIView()
+        line.backgroundColor = defaultLineColor
+        transferView.addSubview(line)
         
         line.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.right.equalToSuperview()
-            make.height.equalTo(1)
-            make.top.equalTo(nameField!.snp.bottom).offset(10)
-        }
-        
-        accountlb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.top.equalTo(line.snp.bottom).offset(20)
-        }
-        
-        accountimg.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.height.width.equalTo(18)
-            make.centerY.equalTo(accountlb)
-        }
-        
-        cardField!.snp.makeConstraints { make in
-            make.leading.equalTo(accountlb.snp.trailing).offset(5)
-            make.right.equalTo(accountimg.snp.left).offset(-10)
-            make.height.equalTo(40)
-            make.centerY.equalTo(accountlb)
-        }
-        
-        bankline.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.right.equalToSuperview()
-            make.height.equalTo(1)
-            make.top.equalTo(cardField!.snp.bottom).offset(10)
-        }
-        
-        bankremindlb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.top.equalTo(bankline.snp.bottom).offset(25)
-        }
-        
-        bankrightimg.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.width.equalTo(8)
-            make.height.equalTo(15)
-            make.centerY.equalTo(bankremindlb)
-        }
-        
-        banklb.snp.makeConstraints { make in
-            make.leading.equalTo(bankremindlb.snp.trailing).offset(5)
-            make.right.equalTo(bankrightimg.snp.left).offset(-10)
-            make.height.equalTo(30)
-            make.centerY.equalTo(bankremindlb)
-        }
-        
-        button.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
+            make.top.equalTo(unitlb.snp.bottom).offset(15)
+            make.height.equalTo(0.5)
+        }
+        
+        let transferlb:UILabel = creatLabel(CGRect.zero, "转账金额", fontMedium(16), Main_TextColor)
+        transferView.addSubview(transferlb)
+        
+        transferlb.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(15)
+            make.top.equalTo(line.snp.bottom).offset(15)
+        }
+        
+        moneyField = createField(CGRect.zero, "请输入", fontMedium(26), Main_Color, nil, nil)
+        moneyField?.delegate = self
+        transferView.addSubview(moneyField!)
+        moneyField?.inputView = keyboard
+        moneyField?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
+        moneyField!.snp.makeConstraints { make in
+            make.left.equalToSuperview()
             make.height.equalTo(50)
-            make.centerY.equalTo(banklb)
+            make.top.equalTo(transferlb.snp.bottom).offset(20)
+        }
+        
+        transferView.addSubview(moneyRemindlb)
+        moneyRemindlb.isHidden = true
+    }
+    
+    //MARK: - 收款框
+    func addReceiveView(){
+        let titles:Array<String> = ["收款人名称","收款账号","收款银行"]
+        let images:Array<String> = ["transfer_address_book","transfer_camera","trade_right_black"]
+
+        //选择银行
+        var y:CGFloat = 0
+        
+        for (i,str) in titles.enumerated() {
+            let recievelb:UILabel = creatLabel(CGRect.zero, str, fontMedium(16), Main_TextColor)
+            receiveView.addSubview(recievelb)
+            
+            recievelb.snp.makeConstraints { make in
+                make.left.equalToSuperview().offset(15)
+                make.top.equalToSuperview().offset(y+15)
+            }
+            
+            let rightimg:UIImageView = UIImageView()
+            receiveView.addSubview(rightimg)
+            
+            if i < titles.count - 1 {
+                rightimg.image = UIImage(named: images[i])?.withRenderingMode(.alwaysTemplate)
+                rightimg.tintColor = HXColor(0x2d70ed)
+                
+                rightimg.snp.makeConstraints { make in
+                    make.right.equalToSuperview().offset(-15)
+                    
+                    if i == 0{
+                        make.width.height.equalTo(18)
+                    }else{
+                        make.height.equalTo(15)
+                        make.width.equalTo(18)
+                    }
+                    make.centerY.equalTo(recievelb)
+                }
+                
+                let line:UIView = UIView()
+                line.backgroundColor = defaultLineColor
+                receiveView.addSubview(line)
+                
+                line.snp.makeConstraints { make in
+                    make.left.right.equalToSuperview()
+                    make.height.equalTo(0.5)
+                    make.top.equalTo(recievelb.snp.bottom).offset(15)
+                }
+            }
+            
+            if i == 0 {
+                nameField = createField(CGRect.zero, "请输入", fontRegular(16), Main_TextColor, UIView(), UIView())
+                nameField!.delegate = self
+                receiveView.addSubview(nameField!)
+                
+                nameField!.snp.makeConstraints { make in
+                    make.left.equalToSuperview().offset(120)
+                    make.right.equalTo(rightimg.snp.left).offset(-10)
+                    make.height.equalTo(30)
+                    make.centerY.equalTo(recievelb)
+                }
+            }else if i == 1 {
+                cardField = createField(CGRect.zero, "请输入", fontRegular(16), Main_TextColor, UIView(), UIView())
+                cardField!.enableBankCardFormat()
+                cardField!.delegate = self
+                cardField!.keyboardType = .numberPad
+                cardField!.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+                receiveView.addSubview(cardField!)
+                
+                cardField!.snp.makeConstraints { make in
+                    make.left.equalToSuperview().offset(120)
+                    make.right.equalTo(rightimg.snp.left).offset(-10)
+                    make.height.equalTo(30)
+                    make.centerY.equalTo(recievelb)
+                }
+            }else{
+                rightimg.image = UIImage(named: images[i])
+                
+                rightimg.snp.makeConstraints { make in
+                    make.right.equalToSuperview().offset(-15)
+                    make.width.height.equalTo(14)
+                    make.centerY.equalTo(recievelb)
+                }
+                
+                banklb.text = "选择银行"
+                banklb.textColor = Main_detailColor
+                banklb.font = fontRegular(16)
+                banklb.textAlignment = .right
+                banklb.isUserInteractionEnabled = true
+                receiveView.addSubview(banklb)
+                
+                banklb.snp.makeConstraints { make in
+                    make.right.equalTo(rightimg.snp.left).offset(-3)
+                    make.centerY.equalTo(recievelb)
+                }
+            }
+            y+=50
         }
     }
+    
+    //MARK: - 转账方式
+    func addPaymentMethodView(){
+        let titles:Array<String> = ["转账方式","附言","短信通知收款人（0.00元/条）"]
+        let details:Array<String> = ["实时","选填",""]
 
+        //选择银行
+        var y:CGFloat = 0
+        
+        for (i,str) in titles.enumerated() {
+            let recievelb:UILabel = creatLabel(CGRect.zero, str, fontMedium(16), Main_TextColor)
+            paymentMethodView.addSubview(recievelb)
+            
+            recievelb.snp.makeConstraints { make in
+                make.left.equalToSuperview().offset(15)
+                make.top.equalToSuperview().offset(y+15)
+            }
+            
+            let rightimg:UIImageView = UIImageView()
+            
+            if i <= 1 {
+                rightimg.image = UIImage(named: "trade_right_black")
+                paymentMethodView.addSubview(rightimg)
+                
+                rightimg.snp.makeConstraints { make in
+                    make.right.equalToSuperview().offset(-15)
+                    make.centerY.equalTo(recievelb)
+                    make.width.height.equalTo(14)
+                }
+            }
+            
+            
+            if i == 0 {
+                let rightlb:UILabel = creatLabel(CGRect.zero, details[i], fontRegular(16), Main_TextColor)
+                paymentMethodView.addSubview(rightlb)
+                
+                rightlb.snp.makeConstraints { make in
+                    make.right.equalTo(rightimg.snp.left).offset(-3)
+                    make.height.equalTo(30)
+                    make.centerY.equalTo(recievelb)
+                }
+            }else if(i == 1){
+                //附言
+                remindField = createField(CGRect.zero,  details[i], fontRegular(16), Main_detailColor, UIView(), UIView())
+                remindField?.textAlignment = .right
+                remindField?.delegate = self
+                paymentMethodView.addSubview(remindField!)
+                
+                remindField!.snp.makeConstraints { make in
+                    make.right.equalTo(rightimg.snp.left).offset(-3)
+                    make.height.equalTo(20)
+                    make.centerY.equalTo(recievelb)
+                }
+            }else{
+                //开关
+                customSwitch.onTintColor = Main_Color // 开启时颜色
+                customSwitch.offTintColor = .white      // 关闭时颜色
+                customSwitch.thumbShadowEnabled = true // 是否显示阴影
+                customSwitch.isOn = false              // 初始状态
+                customSwitch.isUserInteractionEnabled = false
+//                customSwitch.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
+                paymentMethodView.addSubview(customSwitch)
+                
+                customSwitch.snp.makeConstraints { make in
+                    make.right.equalToSuperview().offset(-15)
+                    make.centerY.equalTo(recievelb)
+                    make.height.equalTo(30)
+                    make.width.equalTo(56)
+                }
+            }
+            
+            if i < titles.count - 1 {
+                let line:UIView = UIView()
+                line.backgroundColor = defaultLineColor
+                paymentMethodView.addSubview(line)
+                
+                line.snp.makeConstraints { make in
+                    make.left.right.equalToSuperview()
+                    make.height.equalTo(0.5)
+                    make.top.equalTo(recievelb.snp.bottom).offset(15)
+                }
+            }
+            y+=50
+        }
+    }
+    
+    @objc func switchChanged(_ sender: CustomSwitch) {
+        print("当前状态: \(sender.isOn)")
+    }
+    
+    @objc func transferOut(){
+        
+    }
+    
     @objc func selectBank(){
         let ctrl:SelectBankCtrl = SelectBankCtrl()
         ctrl.onTap = { dic in
@@ -675,179 +774,6 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         }
         ctrl.enableLazyLoad = true
         self.navigationController?.pushViewController(ctrl, animated: true)
-    }
-    
-    func addBottomView(){
-        bottomView.backgroundColor = .white
-        
-        let namelb:UILabel = creatLabel(CGRect.zero, "转账金额", fontMedium(18), Main_TextColor)
-        bottomView.addSubview(namelb)
-        
-        let leftLb:UILabel = creatLabel(CGRect.zero, "¥ ", fontNumber(30), Main_TextColor)
-        
-        //百-十万亿 0x808080 money_bottom
-        moneyField = createField(CGRect.zero, "0手续费", fontNumber(30), Main_TextColor, UIView(), leftLb)
-        moneyField?.delegate = self
-        bottomView.addSubview(moneyField!)
-        moneyField?.inputView = keyboard
-        moneyField?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
-        bottomView.addSubview(moneyRemindImg)
-
-        moneyRemindlb.backgroundColor = HXColor(0x808080)
-        bottomView.addSubview(moneyRemindlb)
-        
-        moneyRemindImg.isHidden = true
-        moneyRemindlb.isHidden = true
-        
-        let line:UIView = UIView()
-        line.backgroundColor = defaultLineColor
-        bottomView.addSubview(line)
-        
-        let accountlb:UILabel = creatLabel(CGRect.zero, "付款卡", fontRegular(16), Main_TextColor)
-        bottomView.addSubview(accountlb)
-        
-         
-        tansBanklb.text = "\(payCard.bank)(\(payCard.lastCard))"
-        tansBanklb.textColor = Main_TextColor
-        tansBanklb.font = fontRegular(16)
-        tansBanklb.textAlignment = .right
-        bottomView.addSubview(tansBanklb)
-        
-        let rightimg:UIImageView = UIImageView()
-        rightimg.image = UIImage(named: "gray_right")
-        bottomView.addSubview(rightimg)
-        
-        balancelb.text = "可用余额 ¥\(getNumberFormatter(myUser?.myBalance ?? 0.00))"
-        balancelb.textColor = Main_TextColor
-        balancelb.font = fontRegular(12)
-        balancelb.textAlignment = .right
-        bottomView.addSubview(balancelb)
-        
-        let infoimg:UIImageView = UIImageView()
-        infoimg.image = UIImage(named: "transfer_info")
-        bottomView.addSubview(infoimg)
-        
-        let remindLine:UIView = UIView()
-        remindLine.backgroundColor = Main_backgroundColor
-        bottomView.addSubview(remindLine)
-        
-        let remindView:UIView = UIView()
-        remindView.backgroundColor = .white
-        bottomView.addSubview(remindView)
-        
-        let remindlb:UILabel = creatLabel(CGRect.zero, "转账附言", fontRegular(16), Main_TextColor)
-        remindView.addSubview(remindlb)
-        
-        remindField = createField(CGRect.zero, "转账", fontRegular(16), Main_TextColor, UIView(), UIView())
-        remindField?.textAlignment = .right
-        remindField?.delegate = self
-        remindView.addSubview(remindField!)
-        
-        
-        let transferRemindimg:UIImageView = UIImageView()
-        transferRemindimg.image = UIImage(named: "transfer_edit")
-        remindView.addSubview(transferRemindimg)
-        
-        
-        namelb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.top.equalTo(20)
-        }
-        
-        moneyField!.snp.makeConstraints { make in
-            make.top.equalTo(namelb.snp.bottom).offset(26)
-            make.left.equalToSuperview().offset(15)
-            make.right.equalToSuperview()
-            make.height.equalTo(48)
-        }
-        
-        moneyRemindlb.snp.makeConstraints { make in
-            make.height.equalTo(15)
-            make.bottom.equalTo(moneyField!.snp.top)
-            make.left.equalTo(moneyField!).offset(20)
-        }
-        
-        moneyRemindImg.snp.makeConstraints { make in
-            make.top.equalTo(moneyRemindlb.snp.bottom).offset(-2)
-            make.centerX.equalTo(moneyRemindlb)
-            make.height.width.equalTo(6)
-        }
-        
-        line.snp.makeConstraints { make in
-            make.left.right.equalTo(moneyField!)
-            make.height.equalTo(1)
-            make.top.equalTo(moneyField!.snp.bottom).offset(16)
-        }
-        
-        accountlb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.top.equalTo(line.snp.bottom).offset(15)
-        }
-        
-        rightimg.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.width.equalTo(8)
-            make.height.equalTo(15)
-            make.centerY.equalTo(accountlb)
-        }
-        
-        tansBanklb.snp.makeConstraints { make in
-            make.leading.equalTo(accountlb.snp.trailing).offset(5)
-            make.height.equalTo(30)
-            make.centerY.equalTo(accountlb)
-            make.right.equalTo(rightimg.snp.left).offset(-10)
-        }
-        
-        infoimg.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.height.width.equalTo(12)
-            make.top.equalTo(tansBanklb.snp.bottom).offset(10)
-        }
-        
-        balancelb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.centerY.equalTo(infoimg)
-            make.right.equalTo(infoimg.snp.left).offset(-10)
-        }
-        
-        remindLine.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.height.equalTo(10)
-            make.top.equalTo(balancelb.snp.bottom).offset(20)
-        }
-        
-        remindView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.height.equalTo(50)
-            make.top.equalTo(remindLine.snp.bottom)
-        }
-        
-        remindlb.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(15)
-            make.height.equalTo(20)
-            make.width.equalTo(100)
-            make.centerY.equalToSuperview()
-        }
-        
-        transferRemindimg.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-15)
-            make.width.equalTo(17)
-            make.height.equalTo(18)
-            make.top.equalTo(remindlb)
-        }
-        
-        remindField!.snp.makeConstraints { make in
-            make.right.equalTo(transferRemindimg.snp.left).offset(-10)
-            make.height.equalTo(40)
-            make.centerY.equalTo(remindlb)
-            make.left.equalTo(remindlb.snp.right).offset(5)
-        }
-        
-        ViewRadius(moneyRemindlb, 2)
     }
     
     //预处理后的字典
@@ -892,10 +818,8 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             if textField.text?.isEmpty == false && Double(textField.text!)! > 100 {
                 moneyRemindlb.text = getChineseMoney(str: textField.text!)
                 moneyRemindlb.isHidden = false
-                moneyRemindImg.isHidden = false
             }else{
                 moneyRemindlb.isHidden = true
-                moneyRemindImg.isHidden = true
             }
         }
     }
@@ -971,16 +895,15 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         print("键盘收起")
     }
     
-    
     // 拦截点击：不让系统弹键盘给这个 field，而是用自定义 accessory 弹出并在确认后回填
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if textField == remindField {
             TransferAccessoryPresenter.shared.present(from: textField, tags: transferTags, initialText: textField.text, onConfirm: { [weak textField] text in
                 textField?.text = text
+                textField?.textColor = Main_TextColor
             }, onCancel: {
                 // optional
             })
-
             // return false 阻止外部 textField 成为第一响应者（避免两个编辑器冲突）
             return false
         }

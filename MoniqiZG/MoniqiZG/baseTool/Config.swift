@@ -69,7 +69,7 @@ var myTradeList:[TransferModel] = []
 //是否进行人脸识别
 var faceCheck = true
 
-let transferTags = ["测试", "WAB10200", "工资", "还钱给_", "借钱给_", "往来款", "补贴", "奖金"]
+let transferTags = ["工资","生活费","还信用卡","还贷款","月房租","还钱给","借钱给"]
 
 //名字库
 let firstNames = ["李", "王", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴",
@@ -132,7 +132,9 @@ let changeMyIncomeNotificationName = "changeMyIncome"
 let addMyCardNotificationName = "addMyCardNotificationName"
 
 
-let Main_TextColor:UIColor = HXColor(0x000000)
+let Main_TextColor:UIColor = HXColor(0x222222)
+
+let Color333333:UIColor = HXColor(0x333333)
 
 let Main_normalColor:UIColor = HXColor(0x8a8a8a)
 
@@ -356,7 +358,7 @@ public func createField(_ frame:CGRect , _ placeholder:String , _ font:UIFont, _
     field.leftViewMode = .always
     field.rightViewMode = .always
     
-    let str:NSMutableAttributedString = NSMutableAttributedString.init(string: placeholder, attributes: [NSAttributedString.Key.font:fieldPlaceholderFont , NSAttributedString.Key.foregroundColor:fieldPlaceholderColor])
+    let str:NSMutableAttributedString = NSMutableAttributedString.init(string: placeholder, attributes: [NSAttributedString.Key.font:font , NSAttributedString.Key.foregroundColor:fieldPlaceholderColor])
     field.attributedPlaceholder = str
     
     if let view = leftView {
@@ -679,29 +681,23 @@ func getChineseMoney(str: String) -> String {
     
     switch money {
     case 100..<1_000:
-        return " 百 "
+        return "｜百 "
     case 1_000..<10_000:
-        return " 千 "
+        return "｜千 "
     case 10_000..<100_000:
-        return " 万 "
+        return "｜万 "
     case 100_000..<1_000_000:
-        return " 十万 "
+        return "｜十万 "
     case 1_000_000..<10_000_000:
-        return " 百万 "
+        return "｜百万 "
     case 10_000_000..<100_000_000:
-        return " 千万 "
+        return "｜千万 "
     case 100_000_000..<1_000_000_000:
-        return " 亿 "
+        return "｜亿 "
     case 1_000_000_000..<10_000_000_000:
-        return " 十亿 "
-    case 10_000_000_000..<100_000_000_000:
-        return " 百亿 "
-    case 100_000_000_000..<1_000_000_000_000:
-        return " 千亿 "
-    case 1_000_000_000_000..<10_000_000_000_000:
-        return " 万亿 "
+        return "｜十亿 "
     default:
-        return " 十万亿 "
+        return "｜百亿 "
     }
 }
 

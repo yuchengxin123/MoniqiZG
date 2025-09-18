@@ -12,14 +12,12 @@ import RxSwift
 import RxCocoa
 import SwipeCellKit
 
-class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
+class TransferCtrl: BaseCtrl,UIScrollViewDelegate {
     
     private var didSetupCorner = false
     let cardImageV:UIImageView = UIImageView()
     
     private let disposeBag = DisposeBag()
-    private let transferTable = UITableView()
-    private let datas = BehaviorRelay<[TransferPartner]>(value: [])
     
     private let myCardTable = UITableView()
     private let myCardDatas = BehaviorRelay<[CardModel]>(value: [])
@@ -34,7 +32,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         basicScrollView.delegate = self
-        view.backgroundColor = .white
+        view.backgroundColor = Main_backgroundColor
         contentView.backgroundColor = .white
         addHeadView()
     }
@@ -47,14 +45,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        let myPartnerList = myTradeList.uniquePartnersForTransfer200And201()
-        datas.accept(myPartnerList)
         myCardDatas.accept(myCardList)
-        
-        transferTable.snp.updateConstraints { make in
-            make.height.equalTo(Double(datas.value.count) * 70.0 - 1)
-        }
     }
     
     
@@ -73,8 +64,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         leftImg.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
             make.bottom.equalToSuperview().offset(-15)
-            make.width.equalTo(12)
-            make.height.equalTo(20.5)
+            make.width.height.equalTo(24)
         }
       
         let rightImg:UIImageView = UIImageView(image: UIImage(named: "more_black"))
@@ -106,7 +96,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
             make.width.equalTo(80)
         }
         
-        let titlelb:UILabel = creatLabel(CGRect.zero, "转账汇款", fontRegular(19), Main_TextColor)
+        let titlelb:UILabel = creatLabel(CGRect.zero, "转账汇款", fontMedium(18), Main_TextColor)
         titlelb.textAlignment = .center
         headView.addSubview(titlelb)
         
@@ -118,7 +108,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     }
     
     func addView(){
-        let img:UIImage = UIImage(named:"zhuanzhang1") ?? UIImage()
+        let img:UIImage = UIImage(named:"zhuanzhang") ?? UIImage()
         
         let high:CGFloat = img.size.height/img.size.width * (SCREEN_WDITH - 30)
         
@@ -169,8 +159,10 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         addMyCardView()
         
         contentView.snp.makeConstraints { make in
-            make.bottom.equalTo(transferTable.snp.bottom).offset(20)
+            make.bottom.equalTo(myCardTable.snp.bottom)
         }
+        
+        self.view.layoutIfNeeded()
         
         setupViewWithRoundedCornersAndShadow(
             cardImageV,
@@ -192,25 +184,25 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         contentView.addSubview(titlelb)
         
         let line:UIView = UIView()
-        line.backgroundColor = Main_detailColor
+        line.backgroundColor = defaultLineColor
         contentView.addSubview(line)
         
         if let avatar = loadUserImage(fileName: "usericon.png") {
             userIcon.image = avatar
         } else {
-            userIcon.image = UIImage(named: "user_default")
+            userIcon.image = UIImage(named: "user_icon_default")
         }
         contentView.addSubview(userIcon)
         
         
         userCards.text = "我的账户(\(myCardDatas.value.count))"
-        userCards.font = fontRegular(12)
+        userCards.font = fontMedium(16)
         userCards.textColor = Main_TextColor
         userCards.backgroundColor = .white
         contentView.addSubview(userCards)
         
         
-        userRightimg.image = UIImage(named: "user_botttom")
+        userRightimg.image = UIImage(named: "user_bottom")
         contentView.addSubview(userRightimg)
         
         let btn:UIButton = UIButton()
@@ -220,7 +212,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         myCardTable.register(cardCell.self, forCellReuseIdentifier: "myCardCell")
         myCardTable.separatorStyle = .none
         myCardTable.backgroundColor = .white
-        myCardTable.rowHeight = 70 // 设置固定高度
+        myCardTable.rowHeight = 50 // 设置固定高度
         contentView.addSubview(myCardTable)
         myCardTable.isScrollEnabled = false
         
@@ -239,7 +231,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         
         line.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.height.equalTo(1)
+            make.height.equalTo(0.5)
             make.top.equalTo(titlelb.snp.bottom).offset(15)
         }
         
@@ -264,9 +256,8 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         
         userRightimg.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-15)
-            make.height.equalTo(8)
-            make.width.equalTo(15)
-            make.centerY.equalTo(titlelb)
+            make.width.height.equalTo(24)
+            make.centerY.equalTo(userCards)
         }
         
         myCardTable.snp.makeConstraints { make in
@@ -280,6 +271,7 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
             .bind(to: myCardTable.rx.items(cellIdentifier: "myCardCell", cellType: cardCell.self)) { index, model, cell in
                 guard let model = model as? CardModel else { return }
                 cell.addData(_data: model)
+                cell.showDetaillb(show: index == 1 )
             }
             .disposed(by: disposeBag)
         
@@ -300,12 +292,11 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
     @objc func showMyCard(){
         isShowCard = !isShowCard
         
-        
         userRightimg.image = UIImage(named: isShowCard ? "user_top" : "user_bottom")
         
         myCardTable.snp.updateConstraints { make in
             if isShowCard == true {
-                make.height.equalTo(Double(myCardDatas.value.count) * 70.0)
+                make.height.equalTo(Double(myCardDatas.value.count) * 50.0)
             }else{
                 make.height.equalTo(0)
             }
@@ -343,73 +334,6 @@ class TransferCtrl: BaseCtrl,UIScrollViewDelegate,SwipeTableViewCellDelegate {
         guard !didSetupCorner else { return }
         didSetupCorner = true
     }
-    
-    
-    //MARK: -  右侧划动操作
-    func tableView(_ tableView: UITableView,
-                   editActionsForRowAt indexPath: IndexPath,
-                   for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        
-        guard orientation == .right else { return nil }
-        
-        // 删除按钮
-        let deleteAction = SwipeAction(style: .destructive, title: "删除") { action, indexPath in
-            print("点击删除 \(indexPath.row)")
-            self.handleDeleteAction(at: indexPath)
-        }
-        deleteAction.backgroundColor = HXColor(0xe7504c)
-        deleteAction.textColor = .white
-        deleteAction.font = fontMedium(14)
-        deleteAction.hidesWhenSelected = true
-        
-        // 编辑按钮
-        let editAction = SwipeAction(style: .default, title: "查看") { action, indexPath in
-            print("点击查看 \(indexPath.row)")
-            self.handleCheckAction(at: indexPath)
-        }
-        editAction.backgroundColor = HXColor(0x5995ef)
-        editAction.textColor = .white
-        editAction.font = fontMedium(14)
-        editAction.hidesWhenSelected = true
-        
-        return [deleteAction, editAction]
-    }
-    
-    // 自定义按钮的宽度
-    func tableView(_ tableView: UITableView,
-                   editActionsOptionsForRowAt indexPath: IndexPath,
-                   for orientation: SwipeActionsOrientation) -> SwipeOptions {
-        var options = SwipeOptions()
-        options.expansionStyle = .none   // 禁止全屏滑动触发
-        options.maximumButtonWidth = 50 // 最大按钮宽度
-        options.minimumButtonWidth = 50  // 最小按钮宽度
-        options.buttonVerticalAlignment = .center
-        return options
-    }
-
-    private func handleCheckAction(at indexPath: IndexPath) {
-        // 这里你需要从 datas 中移除对应的数据
-        // 假设 datas 是一个 BehaviorRelay<[Any]>
-        let currentData = datas.value
-        let model:TransferPartner = currentData[indexPath.row]
-
-        let ctrl:TradeCtrl = TradeCtrl()
-        ctrl.oldModel = model
-        self.navigationController?.pushViewController(ctrl, animated: true)
-    }
-    
-    private func handleDeleteAction(at indexPath: IndexPath) {
-        // 这里你需要从 datas 中移除对应的数据
-        var myPartnerList = datas.value
-        let model:TransferPartner = myPartnerList[indexPath.row]
-        myPartnerList.remove(at: indexPath.row)
-        
-        datas.accept(myPartnerList)
-        
-        //删除对应转账流水
-        myTradeList.removeAllTransactionsOfUser(of: model)
-        allBtn.setTitle("  全部 \(datas.value.count)  ", for: .normal)
-    }
 }
 
 //MARK: - 卡片
@@ -435,23 +359,22 @@ class cardCell: SwipeTableViewCell {
     func createCellUI(){
         contentView.addSubview(headImage)
         
-        titlelb.textColor = HXColor(0xa3a3a3)
+        titlelb.textColor = HXColor(0x777777)
         titlelb.font = fontRegular(14)
         titlelb.text = "尾号 9999 长城电子借记卡"
         contentView.addSubview(titlelb)
         
         
-        detaillb.textColor = HXColor(0x613000)
+        detaillb.textColor = HXColor(0x643405)
         detaillb.font = fontRegular(12)
         detaillb.text = "  个人养老金  "
         detaillb.backgroundColor = HXColor(0xf2e6d2)
-        detaillb.textAlignment = .center
         contentView.addSubview(detaillb)
         
         
         headImage.snp.makeConstraints { make in
             make.height.width.equalTo(34)
-            make.left.equalToSuperview().offset(50)
+            make.left.equalToSuperview().offset(40)
             make.centerY.equalToSuperview()
         }
         
@@ -462,12 +385,13 @@ class cardCell: SwipeTableViewCell {
         }
         
         detaillb.snp.makeConstraints { make in
-            make.height.equalTo(24)
+            make.height.equalTo(18)
             make.centerY.equalToSuperview()
             make.right.equalToSuperview().offset(-15)
         }
         
         ViewRadius(detaillb, 2)
+        ViewRadius(headImage, 17)
         
         detaillb.isHidden = true
     }
@@ -476,6 +400,10 @@ class cardCell: SwipeTableViewCell {
         model = _data
         titlelb.text = ("尾号 \(_data.lastCard) \(_data.bank)")
         headImage.image = UIImage(named: _data.icon)
+    }
+    
+    func showDetaillb(show:Bool) {
+        detaillb.isHidden = !show
     }
     
     override func awakeFromNib() {

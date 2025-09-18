@@ -72,6 +72,8 @@ class CustomSwitch: UIControl {
     private func setup() {
         backgroundView.layer.cornerRadius = bounds.height / 2
         backgroundView.isUserInteractionEnabled = false
+        backgroundView.layer.borderWidth = 1
+        backgroundView.layer.borderColor = Main_backgroundColor.cgColor
         addSubview(backgroundView)
         
         thumbView.backgroundColor = thumbTintColor

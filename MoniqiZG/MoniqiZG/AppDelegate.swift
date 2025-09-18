@@ -49,7 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         //转账伙伴
        // myPartnerList = TransferPartner.loadArray(forKey: MyTransferPartnerCards, as: TransferPartner.self)
         //我的卡
-        myCardList = CardModel.loadArray(forKey: MyCards, as: CardModel.self)
+        myCardList = [CardModel(),CardModel()]
+        //CardModel.loadArray(forKey: MyCards, as: CardModel.self)
         
         
         return true
