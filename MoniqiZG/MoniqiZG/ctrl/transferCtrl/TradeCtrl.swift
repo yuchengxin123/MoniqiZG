@@ -31,7 +31,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     private var cardField:UITextField?
     private var nameField:UITextField?
     private var moneyField:UITextField?
-    private let moneyRemindlb:UILabel = creatLabel(CGRect.zero, "", fontRegular(10), HXColor(0xbebebe))
+    private let moneyRemindlb:UILabel = creatLabel(CGRect.zero, "", fontRegular(14), HXColor(0x999999))
     
     private let banklb:UILabel = UILabel()
     private let cardlb:UILabel = UILabel()
@@ -41,9 +41,12 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     private let balancelb:UILabel = UILabel()
     private var remindField:UITextField?
     
+    var realAmount:String = ""
+    var transferAmount:String = ""
+    
     var banktype:String = "bank_type_7"
     
-    private let keyboard = NumberKeyboard(type: .decimal,frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: 320))
+    private let keyboard = NumberKeyboard(type: .decimal,frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: CustomKeyboardHeight))
     
     private var bankMatchDict: [String: [String: Any]] = [:] // 预处理后的字典
     private var searchTimer: Timer?
@@ -503,7 +506,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             make.top.equalTo(cardView.snp.bottom).offset(10)
         }
         
-        let amountlb:UILabel = creatLabel(CGRect.zero, "人民币元 \(getNumberFormatter(myUser!.myBalance))", fontRegular(14), Main_Color)
+        let amountlb:UILabel = creatLabel(CGRect.zero, "人民币元 \(getNumberFormatter(myUser!.myBalance))", fontRegular(14), MoneyColor)
         topView.addSubview(amountlb)
         
         amountlb.snp.makeConstraints { make in
@@ -559,20 +562,28 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             make.top.equalTo(line.snp.bottom).offset(15)
         }
         
-        moneyField = createField(CGRect.zero, "请输入", fontMedium(26), Main_Color, nil, nil)
+        moneyField = createField(CGRect.zero, "请输入", fontNumber(30), MoneyColor, UIView(), UIView())
         moneyField?.delegate = self
         transferView.addSubview(moneyField!)
         moneyField?.inputView = keyboard
         moneyField?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         
+        let str:NSMutableAttributedString = NSMutableAttributedString.init(string: "请输入", attributes: [NSAttributedString.Key.font:fontRegular(24) , NSAttributedString.Key.foregroundColor:fieldPlaceholderColor])
+        moneyField?.attributedPlaceholder = str
+        
         moneyField!.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.height.equalTo(50)
-            make.top.equalTo(transferlb.snp.bottom).offset(20)
+            make.left.equalToSuperview().offset(15)
+            make.height.equalTo(45)
+            make.top.equalTo(transferlb.snp.bottom).offset(24)
         }
         
         transferView.addSubview(moneyRemindlb)
         moneyRemindlb.isHidden = true
+        
+        moneyRemindlb.snp.makeConstraints { make in
+            make.left.equalTo(transferlb)
+            make.top.equalTo(transferlb.snp.bottom)
+        }
     }
     
     //MARK: - 收款框
@@ -580,7 +591,6 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         let titles:Array<String> = ["收款人名称","收款账号","收款银行"]
         let images:Array<String> = ["transfer_address_book","transfer_camera","trade_right_black"]
 
-        //选择银行
         var y:CGFloat = 0
         
         for (i,str) in titles.enumerated() {
@@ -667,6 +677,9 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
                     make.right.equalTo(rightimg.snp.left).offset(-3)
                     make.centerY.equalTo(recievelb)
                 }
+                
+                let tap:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(selectBank))
+                banklb.addGestureRecognizer(tap)
             }
             y+=50
         }
@@ -762,7 +775,9 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     }
     
     @objc func transferOut(){
-        
+        realAmount = String(format: "%02f",myUser?.myBalance ?? 0.00)
+        transferAmount = getNumberFormatter(myUser?.myBalance ?? 0.00)
+        moneyField?.text = transferAmount
     }
     
     @objc func selectBank(){
@@ -793,6 +808,10 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         }
     }
     
+    override func touchedView(){
+        moneyField?.text = transferAmount
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool{
         textField.endEditing(true)
         return true
@@ -821,6 +840,8 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             }else{
                 moneyRemindlb.isHidden = true
             }
+            realAmount = textField.text!
+            transferAmount = getNumberFormatter(Double(textField.text!) ?? 0.00)
         }
     }
     
@@ -865,6 +886,10 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
                 self.moneyField?.deleteBackward()
             case .done:
                 self.moneyField?.resignFirstResponder()
+                self.moneyField?.text = transferAmount
+            case .close:
+                self.moneyField?.resignFirstResponder()
+                self.moneyField?.text = transferAmount
             }
         }
     }
@@ -906,6 +931,9 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             })
             // return false 阻止外部 textField 成为第一响应者（避免两个编辑器冲突）
             return false
+        }
+        if textField == moneyField {
+            moneyField?.text = realAmount
         }
         return true
     }

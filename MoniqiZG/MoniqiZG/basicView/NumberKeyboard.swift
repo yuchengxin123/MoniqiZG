@@ -16,22 +16,25 @@ import SnapKit
 
 /// 键盘类型
 enum NumberKeyboardType {
-    case bankCard     // 银行卡号/密码输入
-    case decimal      // 金额输入（带小数点）
+    case phone     // 手机号转账
+    case decimal      // 账号转账
 }
 
 enum NumberKeyboardKey {
     case number(String)   // 普通数字或点
     case delete           // 删除
     case done             // 完成
+    case close             // 关闭
 }
+
+let space:CGFloat = 4
 
 class NumberKeyboard: UIView {
     
     var keyTapped: ((NumberKeyboardKey) -> Void)?
     private let type: NumberKeyboardType
     
-    init(type: NumberKeyboardType, frame: CGRect = CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: 320)) {
+    init(type: NumberKeyboardType, frame: CGRect = CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: CustomKeyboardHeight)) {
         self.type = type
         super.init(frame: frame)
         setupUI()
@@ -48,137 +51,182 @@ class NumberKeyboard: UIView {
         let grid = UIStackView()
         grid.axis = .vertical
         grid.distribution = .fillEqually
-        grid.spacing = 4
+        grid.spacing = space
         addSubview(grid)
         grid.translatesAutoresizingMaskIntoConstraints = false
-        
         
         bottomview.snp.makeConstraints { make in
             make.bottom.left.right.equalToSuperview()
         }
+        let wide:CGFloat = (SCREEN_WDITH - 12 - space * 2)/4.0 * 3.0 + 8
+        let btnHigh:CGFloat = 52
         
         grid.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(3)
-            make.bottom.equalTo(bottomview.snp.top).offset(-4)
-            make.height.equalTo(232.0)
+            make.top.left.equalToSuperview().offset(6)
+            make.width.equalTo(wide)
+            make.bottom.equalTo(bottomview.snp.top).offset(-space)
+            make.height.equalTo(btnHigh * 4 + space * 3)
         }
         
         var titles: [[String]] = []
         
         switch type {
-        case .bankCard:
-            backgroundColor = HXColor(0x212121)
-            bottomview.backgroundColor = HXColor(0x212121)
+        case .phone:
+            backgroundColor = HXColor(0xe5e5e5)
+            bottomview.backgroundColor = HXColor(0xe5e5e5)
             // 银行卡数字密码输入键盘
             titles = [
                 ["1","2","3"],
                 ["4","5","6"],
                 ["7","8","9"],
-                ["完成","0","key_delete_white"]
+                ["phone_dot_black","0","phone_keyboard_black"]
             ]
-            let titlelb:UILabel = creatLabel(CGRect.zero, "招商银行安全输入", fontMedium(16), HXColor(0x939393))
-            titlelb.textAlignment = .center
-            addSubview(titlelb)
             
-            titlelb.snp.makeConstraints { make in
-                make.left.right.equalToSuperview()
-                make.top.equalToSuperview()
-                make.height.equalTo(45)
+            let deleteBtn:UIButton = UIButton()
+            deleteBtn.setImage(UIImage(named: "phone_delete_black"), for: .normal)
+            deleteBtn.setImage(UIImage(named: "phone_delete_black"), for: .selected)
+            deleteBtn.addTarget(self, action: #selector(deleteKeyboard), for: .touchUpInside)
+            addSubview(deleteBtn)
+
+            let high:CGFloat = btnHigh * 3 + space * 2
+            
+            deleteBtn.snp.makeConstraints { make in
+                make.left.equalTo(grid.snp.right).offset(space)
+                make.top.equalToSuperview().offset(6)
+                make.right.equalToSuperview().offset(-6)
+                make.height.equalTo(btnHigh)
             }
-           
-            bottomview.snp.makeConstraints { make in
-                make.height.equalTo(bottomSafeAreaHeight + 26)
+            
+            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, HXColor(0x2d70ed), self, #selector(sureKeyboard))
+            addSubview(sureBtn)
+
+            sureBtn.snp.makeConstraints { make in
+                make.left.equalTo(deleteBtn)
+                make.top.equalTo(deleteBtn.snp.bottom).offset(space)
+                make.right.equalToSuperview().offset(-6)
+                make.height.equalTo(high)
             }
+            
+            self.layoutIfNeeded()
+            ViewRadius(deleteBtn, 5)
+            ViewRadius(sureBtn, 5)
+//            setRoundedCornersAndShadow(view: deleteBtn)
+//            setRoundedCornersAndShadow(view: sureBtn)
+            
         case .decimal:
-            backgroundColor = HXColor(0xd1d5db)
-            bottomview.backgroundColor = .white
+            backgroundColor = HXColor(0xe5e5e5)
+            bottomview.backgroundColor = HXColor(0xe5e5e5)
             // 金额输入键盘
             titles = [
                 ["1","2","3"],
                 ["4","5","6"],
                 ["7","8","9"],
-                ["・","0","key_delete_black"]
+                ["key_dot_black","0","key_keyboard_black"]
             ]
-            let titlebtn:UIButton = creatButton(CGRect.zero, "完成", fontRegular(16), HXColor(0x555658), .clear, self, #selector(closeKeyboard))
-            addSubview(titlebtn)
             
-            titlebtn.snp.makeConstraints { make in
-                make.top.right.equalToSuperview()
-                make.width.equalTo(80)
-                make.height.equalTo(45)
+            let deleteBtn:UIButton = UIButton()
+            deleteBtn.setImage(UIImage(named: "key_delete_black"), for: .normal)
+            deleteBtn.setImage(UIImage(named: "key_delete_black"), for: .selected)
+            deleteBtn.addTarget(self, action: #selector(deleteKeyboard), for: .touchUpInside)
+            addSubview(deleteBtn)
+
+            let high:CGFloat = btnHigh * 2 + space
+            
+            deleteBtn.snp.makeConstraints { make in
+                make.left.equalTo(grid.snp.right).offset(space)
+                make.top.equalToSuperview().offset(6)
+                make.right.equalToSuperview().offset(-6)
+                make.height.equalTo(high)
             }
             
-            bottomview.snp.makeConstraints { make in
-                make.height.equalTo(bottomSafeAreaHeight)
+            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, HXColor(0x2d70ed), self, #selector(sureKeyboard))
+            addSubview(sureBtn)
+
+            sureBtn.snp.makeConstraints { make in
+                make.left.equalTo(deleteBtn)
+                make.top.equalTo(deleteBtn.snp.bottom).offset(space)
+                make.right.equalToSuperview().offset(-6)
+                make.height.equalTo(high)
             }
+            
+            ViewRadius(deleteBtn, 5)
+            ViewRadius(sureBtn, 5)
         }
 
         for (i,row) in titles.enumerated() {
             let hstack = UIStackView()
             hstack.axis = .horizontal
             hstack.distribution = .fillEqually
-            hstack.spacing = 4
+            hstack.spacing = space
             grid.addArrangedSubview(hstack)
             
             for (a,title) in row.enumerated() {
                 let btn = UIButton()
                 btn.setTitle(title, for: .normal)
+                btn.tag = 1000 + (i * 3 + a)
+                btn.titleLabel?.font = fontSemibold(30)
                 
                 if type == .decimal {
-                    btn.titleLabel?.font = fontRegular(28)
                     btn.backgroundColor = .white
-                    btn.setTitleColor(HXColor(0x070707), for: .normal)
                 }else{
-                    btn.backgroundColor = HXColor(0x383838)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.titleLabel?.font = fontMedium(28)
+                    btn.backgroundColor = HXColor(0xf9f9fa)
                 }
                 
-                if i == 3{
-                    if a == 0{
-                        //金额
-                        if type == .decimal {
-                            
-                        }else{
-                            btn.backgroundColor = HXColor(0x565656)
-                            btn.titleLabel?.font = fontMedium(20)
-                            btn.setTitleColor(.white, for: .normal)
-                        }
-                    }else if(a == 2){
-                        btn.setTitle("", for: .normal)
-                        //密码
-                        if type == .decimal {
-                            
-                            btn.setImage(UIImage(named: title), for: .normal)
-                        }else{
-                            btn.backgroundColor = HXColor(0x565656)
-                            btn.setImage(UIImage(named: title), for: .normal)
-                        }
-                        
-                    }
-                }
-                ViewRadius(btn, 6)
+                btn.setTitleColor(Main_TextColor, for: .normal)
                 btn.addTarget(self, action: #selector(keyPressed(_:)), for: .touchUpInside)
                 hstack.addArrangedSubview(btn)
+                
+                if i == 3{
+                    if a == 0 || a == 2{
+                        btn.setImage(UIImage(named: title), for: .normal)
+                        btn.setImage(UIImage(named: title), for: .selected)
+                    }
+                }
+                ViewRadius(btn, 5)
             }
         }
+        
+//        self.layoutIfNeeded()
+//        
+//        for hstack in grid.subviews {
+//            for btn in hstack.subviews {
+//                if type == .decimal {
+//                    ViewRadius(btn, 5)
+//                }else{
+//                    setRoundedCornersAndShadow(view: btn)
+//                }
+//            }
+//        }
     }
     
-    @objc func closeKeyboard(){
+    func setRoundedCornersAndShadow(view:UIView){
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 5
+        
+        let border = CALayer()
+        border.backgroundColor = HXColor(0x828486).cgColor
+        border.frame = CGRect(x: 0, y: view.frame.size.height-1,
+                              width: view.frame.size.width, height: 1.0)
+        view.layer.addSublayer(border)
+    }
+    
+    
+    @objc func sureKeyboard(){
         keyTapped?(.done)
     }
     
+    
     @objc private func keyPressed(_ sender: UIButton) {
-        if let title = sender.currentTitle,!title.isEmpty {
-            if title == "完成" {
-                keyTapped?(.done)
-            }else if title == "・"{
-                keyTapped?(.number("."))
-            }else {
-                keyTapped?(.number(title))
-            }
-        } else if sender.image(for: .normal) != nil {
-            keyTapped?(.delete)
+        if sender.tag ==  1009 {
+            keyTapped?(.number("."))
+        }else if sender.tag ==  1011 {
+            keyTapped?(.close)
+        }else{
+            keyTapped?(.number(sender.currentTitle ?? ""))
         }
+    }
+    
+    @objc func deleteKeyboard(){
+        keyTapped?(.delete)
     }
 }

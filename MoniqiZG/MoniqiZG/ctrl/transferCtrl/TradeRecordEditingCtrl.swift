@@ -826,6 +826,8 @@ class TradeRecordEditingCtrl: BaseCtrl,UICollectionViewDelegate,UICollectionView
                 self.moneyField?.deleteBackward()
             case .done:
                 self.moneyField?.resignFirstResponder()
+            case .close:
+                self.moneyField?.resignFirstResponder()
             }
         }
     }

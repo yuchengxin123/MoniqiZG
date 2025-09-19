@@ -23,10 +23,20 @@ class TransferAccessoryView: UIView {
         l.numberOfLines = 0
         return l
     }()
+    
+    private let paragraphStyle:NSMutableParagraphStyle = {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 3      // 行间距
+//        paragraphStyle.paragraphSpacing = 15 // 段落间距
+        paragraphStyle.alignment = .left     // 对齐方式
+        return paragraphStyle
+    }()
 
     private var cancelBtn: UIButton?
     
     private var confirmBtn: UIButton?
+    
+    private let closeBtn: UIButton = UIButton()
     
     private var tagContainer = UIView()
     
@@ -115,24 +125,35 @@ class TransferAccessoryView: UIView {
         }
 
         // textView (内部可编辑区域)
-        textView.font = fontRegular(14)
+        textView.font = fontRegular(16)
         textView.isScrollEnabled = true
         textView.delegate = self
         textView.backgroundColor = Main_backgroundColor
         textView.textColor = Main_TextColor
         bgView.addSubview(textView)
         textView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8)
+            make.top.bottom.equalToSuperview().inset(6)
             make.left.right.equalToSuperview().inset(6)
         }
 
         // placeholder inside textView
         bgView.addSubview(placeholderLabel)
         placeholderLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(15)
+            make.top.equalToSuperview().inset(14)
             make.left.right.equalToSuperview().inset(10)
         }
 
+        closeBtn.setImage(UIImage(named: "field_close"), for: .normal)
+        closeBtn.addTarget(self, action: #selector(cleanContent), for: .touchUpInside)
+        bgView.addSubview(closeBtn)
+        closeBtn.isHidden = true
+        
+        closeBtn.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-25)
+            make.right.equalToSuperview().offset(-15)
+            make.width.height.equalTo(20)
+        }
+        
         // tag container (flow)
         addSubview(tagContainer)
         tagContainer.snp.makeConstraints { make in
@@ -155,7 +176,7 @@ class TransferAccessoryView: UIView {
             
             ViewBorderRadius(btn, tagHeight/2.0, 1, HXColor(0xcccccc))
             
-            if (x + tagWidth + spacing)  > (SCREEN_WDITH - 60){
+            if (x + tagWidth + spacing)  > (SCREEN_WDITH - 70){
                 x = 0
                 y+=(tagHeight + spacing)
             }
@@ -181,6 +202,11 @@ class TransferAccessoryView: UIView {
     }
 
     // MARK: - Actions
+    @objc private func cleanContent(){
+        textView.text = ""
+        updatePlaceholderVisibility()
+    }
+    
     @objc private func cancelAction() {
         onCancel?()
     }
@@ -215,9 +241,23 @@ class TransferAccessoryView: UIView {
 
     private func updatePlaceholderVisibility() {
         placeholderLabel.isHidden = !(textView.text ?? "").isEmpty
+        closeBtn.isHidden = (textView.text ?? "").isEmpty
+        
+        let attrString = NSMutableAttributedString(string: textView.text)
+        attrString.addAttributes([
+            .font: fontRegular(16),
+            .paragraphStyle: paragraphStyle,
+            .kern: 1
+        ], range: NSRange(location: 0, length: attrString.length))
+        
+        textView.attributedText = attrString
     }
 
     @objc private func textViewDidChangeNotification(_ n: Notification) {
+        if textView.text.count >= 32 {
+            let str:String = textView.text
+            textView.text = String(str.prefix(32))
+        }
         updatePlaceholderVisibility()
     }
 }
@@ -280,7 +320,7 @@ class TransferAccessoryPresenter {
         
         let h = TransferAccessoryView.defaultHeight
         v.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(20)
+            make.left.right.equalToSuperview().inset(25)
             make.height.equalTo(h)
             // 初始放到屏幕下方（offset = h）
             self.bottomConstraint = make.bottom.equalTo(window.snp.bottom).offset(h).constraint

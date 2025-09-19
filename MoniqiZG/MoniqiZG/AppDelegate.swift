@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                     
                     bankList = (jsonObject["bankList"] as? [[String: Any]] ?? [])
                     hotBank = (jsonObject["hotBank"] as? [[String: Any]] ?? [])
-                    print("✅ 加载成功，共 \(bankList.count) 条数据")
+                    bankSection = bankBuildSectionData(bankList: bankList, commonList: hotBank)
                 } else {
                     print("❌ JSON 不是字典格式")
                 }

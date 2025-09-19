@@ -27,6 +27,8 @@ let navigationHeight = (statusBarHeight + 44.0)
 let tabBarHeight = (statusBarHeight >= 44.0 ? 83.0 : 49.0)
 //顶部的安全距离
 let topSafeAreaHeight = (statusBarHeight - 20.0)
+//键盘高度
+let CustomKeyboardHeight = 230 + bottomSafeAreaHeight
 
 let WaterMark:WatermarkOverlay = {
     let watermark = WatermarkOverlay(frame: CGRect(x: 0, y: 0, width: SCREEN_WDITH, height: SCREEN_HEIGTH))
@@ -57,10 +59,13 @@ var keyWindow: UIWindow? {
         return UIApplication.shared.keyWindow
     }
 }
-//热门卡号列表
+////热门卡号列表
 var hotBank:[Dictionary<String,Any>] = []
-//卡号列表
+////卡号列表
 var bankList:[Dictionary<String,Any>] = []
+
+var bankSection:[[[String: Any]]] = []
+
 //我的卡片
 var myCardList:[CardModel] = []
 //我的交易记录
@@ -157,6 +162,8 @@ let LightColor:UIColor = HXColor(0xFDF1DB)
 let MyDetailColor:UIColor = HXColor(0x808080)
 
 let defaultLineColor:UIColor = HXColor(0xefefef)
+
+let MoneyColor:UIColor = HXColor(0xe02d47)
 
 let fieldHigh = 46.0
 let fieldFont = fontMedium(14)
@@ -475,7 +482,7 @@ public func SetCornersAndBorder(_ view: UIView, radius: CGFloat,corners: UIRectC
 func setupViewWithRoundedCornersAndShadow(
     _ view: UIView,
     radius: CGFloat,
-    corners: UIRectCorner,
+    corners: UIRectCorner = [.topLeft, .topRight , .bottomLeft, .bottomRight],
     borderWidth: CGFloat = 0,
     borderColor: UIColor = .clear,
     shadowColor: UIColor,
@@ -740,3 +747,41 @@ func upgradeVIP(isUpgrade:Bool){
 }
 
 
+//MARK: - 银行列表按首字母分组排序
+func bankBuildSectionData(bankList: [[String: Any]], commonList: [[String: Any]]) -> [[[String: Any]]] {
+    // 1. 先按首字母分组
+    var grouped: [String: [[String: Any]]] = [:]
+    for item in bankList {
+        let name = item["bankName"] as? String ?? ""
+        let key = name.firstPinyinLetter
+        grouped[key, default: []].append(item)
+    }
+    
+    // 2. 对每个分组内排序
+    for key in grouped.keys {
+        grouped[key]?.sort {
+            let lhs = ($0["bankName"] as? String ?? "")
+            let rhs = ($1["bankName"] as? String ?? "")
+            return lhs.firstPinyinLetter < rhs.firstPinyinLetter
+        }
+    }
+    
+    // 3. 构造 sections 和 data
+    var sections: [String] = []
+    var data: [[[String: Any]]] = []
+    
+    // 插入常用分组
+    if !commonList.isEmpty {
+        sections.append("常用")
+        data.append(commonList)
+    }
+    
+    // 其它 A-Z 分组
+    let sortedKeys = grouped.keys.sorted()
+    for key in sortedKeys {
+        sections.append(key)
+        data.append(grouped[key] ?? [])
+    }
+    
+    return data
+}

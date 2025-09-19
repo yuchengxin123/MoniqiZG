@@ -568,3 +568,20 @@ extension Array where Element == TransferModel {
         return result
     }
 }
+
+//MARK: -中文转拼音首字母
+extension String {
+    var firstPinyinLetter: String {
+        guard !self.isEmpty else { return "#" }
+        let mutableString = NSMutableString(string: self) as CFMutableString
+        CFStringTransform(mutableString, nil, kCFStringTransformToLatin, false)
+        CFStringTransform(mutableString, nil, kCFStringTransformStripDiacritics, false)
+        let pinyin = mutableString as String
+        let firstChar = pinyin.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1).uppercased()
+        if let scalar = firstChar.unicodeScalars.first, CharacterSet.letters.contains(scalar) {
+            return firstChar
+        } else {
+            return "#"
+        }
+    }
+}
