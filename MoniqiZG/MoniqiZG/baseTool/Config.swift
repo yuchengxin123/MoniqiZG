@@ -59,18 +59,18 @@ var keyWindow: UIWindow? {
         return UIApplication.shared.keyWindow
     }
 }
-////热门卡号列表
+//热门卡号列表
 var hotBank:[Dictionary<String,Any>] = []
-////卡号列表
+//卡号列表
 var bankList:[Dictionary<String,Any>] = []
-
+//整合卡号列表
 var bankSection:[[[String: Any]]] = []
-
+//整合卡号列表
+var letterSection:[String] = []
 //我的卡片
 var myCardList:[CardModel] = []
 //我的交易记录
 var myTradeList:[TransferModel] = []
-
 //是否进行人脸识别
 var faceCheck = true
 
@@ -164,6 +164,8 @@ let MyDetailColor:UIColor = HXColor(0x808080)
 let defaultLineColor:UIColor = HXColor(0xefefef)
 
 let MoneyColor:UIColor = HXColor(0xe02d47)
+
+let blueColor:UIColor = HXColor(0x2d70ed)
 
 let fieldHigh = 46.0
 let fieldFont = fontMedium(14)
@@ -748,7 +750,7 @@ func upgradeVIP(isUpgrade:Bool){
 
 
 //MARK: - 银行列表按首字母分组排序
-func bankBuildSectionData(bankList: [[String: Any]], commonList: [[String: Any]]) -> [[[String: Any]]] {
+func bankBuildSectionData(bankList: [[String: Any]], commonList: [[String: Any]]) -> (sections: [String], data: [[[String: Any]]]) {
     // 1. 先按首字母分组
     var grouped: [String: [[String: Any]]] = [:]
     for item in bankList {
@@ -783,5 +785,5 @@ func bankBuildSectionData(bankList: [[String: Any]], commonList: [[String: Any]]
         data.append(grouped[key] ?? [])
     }
     
-    return data
+    return (sections,data)
 }

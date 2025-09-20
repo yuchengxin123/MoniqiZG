@@ -10,10 +10,8 @@ import CoreLocation
 import SnapKit
 import RxSwift
 import RxCocoa
-import LocalAuthentication
-import Foundation
 
-class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureRecognizerDelegate {
+class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate {
     
     private var didSetupCorner = false
     
@@ -55,7 +53,6 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     
     private var cardType:String = "借记卡"
     
-    var transferFail:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -148,13 +145,8 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
         contentView.addSubview(bottomImg)
         
         let bottomBtn:UIButton = UIButton()
-        bottomBtn.addTarget(self, action: #selector(handlTap), for: .touchUpInside)
+        bottomBtn.addTarget(self, action: #selector(sumbitTransfer), for: .touchUpInside)
         contentView.addSubview(bottomBtn)
-        
-        // 2. 添加长按手势识别器
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        longPressGesture.minimumPressDuration = 1.0
-        bottomBtn.addGestureRecognizer(longPressGesture)
 
         topView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(navigationHeight)
@@ -208,7 +200,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
     }
     
     //MARK: - 确认转账
-    func sumbitTransfer(){
+    @objc func sumbitTransfer(){
         if oldModel != nil && isIncome == false {
             if moneyField?.text?.isEmpty == true {
                 return
@@ -235,227 +227,52 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             }
         }
         
-        var text = ""
-        
-        if oldModel != nil && isIncome == false {
-            text = String(format: "%@ (%@)\n%@\n",oldModel!.name,oldModel!.bankName,oldModel!.card)
-        }else{
-            text = String(format: "%@ (%@)\n%@\n",nameField!.text!,banklb.text!,cardField!.text!)
-        }
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 5
-        
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: fontRegular(18),
-            .foregroundColor: Main_TextColor,
-            .paragraphStyle: paragraphStyle
-        ]
-        
-
-        let attributedString:NSMutableAttributedString = NSMutableAttributedString(string: text, attributes: attributes)
-        
-        let boldAttributes: [NSAttributedString.Key: Any] = [
-            .font: fontNumber(23),
-            .foregroundColor: Main_TextColor,
-            .paragraphStyle: paragraphStyle
-        ]
-        
-        attributedString.append(NSAttributedString(string: "¥ \(String(format: "%@", getNumberFormatter(Double(moneyField?.text ?? "") ?? 0.00)))", attributes: boldAttributes))
-        
-        YCXAlertView.YCX_showBankAlert(title: "转给TA", message: attributedString) { index in
-            
-            if index == 1 {
-                self.checkFaceRecognition()
-            }
-        }
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true // 允许同时识别多个手势
-    }
-    
-    //MARK: - 长按转账失败
-    @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .began {
-            print("按钮被长按")
-            transferFail = true
-            // 这里处理长按开始时的逻辑
-            isOpenVIPAction()
-        }
-    }
-    
-    //MARK: - 单击转账成功
-    @objc func handlTap() {
-        transferFail = false
-        isOpenVIPAction()
-    }
-    
-    //MARK: - 验证可用的功能
-    func isOpenVIPAction(){
-        //水印版本不受限制 可以用
-        if myUser!.vip_level == .typeNoAction {
-            sumbitTransfer()
-            isShowWater()
-        }else{
-            //非水印版本 要考虑使用该功能要求的最低会员等级 以及 有效期
-            YcxHttpManager.getTimestamp() { msg,data,code  in
-                if code == 1{
-                    let currentTime:TimeInterval = TimeInterval(data)
-                    
-                    print("本地时间--\((Date().timeIntervalSince1970))\n服务器时间--\(currentTime)")
-                    
-                    //没过期
-                    if myUser!.expiredDate > currentTime {
-                        // 只能改余额
-                        if myUser!.vip_level == .typeVip{
-                            KWindow?.makeToast("需要升级会员", .center, .information)
-                        }else if myUser!.vip_level == .typeSVip || myUser!.vip_level == .typeAll{
-                            self.sumbitTransfer()
-                        }
-                        
-                    }else{
-                        //全部能用但是变成水印版本
-                        self.sumbitTransfer()
-                        self.isShowWater()
-                    }
-                }else{
-                    KWindow?.makeToast(msg, .center, .fail)
-                }
-            }
-        }
-    }
-    
-    //MARK: - 人脸识别
-    func checkFaceRecognition(){
         let balance:Double = (myUser?.myBalance ?? 0.00) - (Double(self.moneyField!.text!) ?? 0.0)
         if balance < 0 {
             KWindow?.makeToast("余额不足，请修改转账金额", .center, .fail)
             return
         }
         
-        let context = LAContext()
-        var error: NSError?
-
-        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "请使用 Face ID 验证身份") { success, authError in
-                DispatchQueue.main.async {
-                    
-                    if success {
-                        print("Face ID 验证通过")
-                    } else {
-                        print("验证失败：\(authError?.localizedDescription ?? "")")
-                    }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        let bigtime:String = getCurrentTimeString()
-                        let smalltime:String = getCurrentTimeString(dateFormat: "MM.dd HH:mm")
-                        
-                        var model:TransferModel?
-                        var partner:TransferPartner = TransferPartner()
-                        
-                        let serialNumber:String = generateRandom16DigitString()
-                        
-                        if self.oldModel != nil {
-                            
-                            partner = self.oldModel!
-                            
-                            model = TransferModel(
-                                ["amount": self.moneyField?.text ?? "", "remind": self.remindField!.text ?? "转账",
-                                 "payBank": self.payCard.bank,"payCard": self.payCard.card,
-                                 "bigtime":bigtime,"smalltime":smalltime,"serialNumber":serialNumber,"partner":partner,"tradeType":TransactionChildType.typeTransfer200.type,"calculatedBalance":balance]
-                            )
-                        }else{
-                            
-                            let lastCard:String = String((self.cardField!.text!.replacingOccurrences(of: " ", with: "")).suffix(4))
-                            
-                            partner = TransferPartner(
-                                ["name": self.nameField?.text ?? "","card":self.cardField!.text!,
-                                 "icon": self.banktype,"lastCard": lastCard,
-                                 "bankName": self.banklb.text ?? "", "cardName": self.cardName,
-                                 "cardType": self.cardType]
-                            )
-                            
-                            model = TransferModel(
-                                ["amount": self.moneyField?.text ?? "", "remind": self.remindField!.text ?? "转账",
-                                 "payBank": self.payCard.bank,"payCard": self.payCard.card,
-                                 "bigtime":bigtime,"smalltime":smalltime,"serialNumber":serialNumber,"partner":partner,"tradeType":TransactionChildType.typeTransfer200.type,"calculatedBalance":balance]
-                            )
-                        }
-                        
-                        //转账失败 不需要保存记录
-                        if self.transferFail == true {
-                            let ctrl:TransferWaitCtrl = TransferWaitCtrl()
-                            ctrl.oldModel = model
-                            ctrl.transferFail = self.transferFail
-                            self.pushAndCloseCtrl(ctrl)
-                           // self.navigationController?.pushViewController(ctrl, animated: true)
-                            return
-                        }
-                        
-                        myTradeList.append(model!)
-                        
-                        TransferModel.saveArray(myTradeList, forKey: MyTradeRecord)
-                        
-                        myUser?.myBalance = balance
-                        
-                        UserManager.shared.update { user in
-                            user.myBalance = balance
-                        }
-                        
-                        //通知余额更新
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: changeMyBalanceNotificationName), object: nil)
-
-                        let ctrl:TransferWaitCtrl = TransferWaitCtrl()
-                        ctrl.oldModel = model
-                        ctrl.transferFail = self.transferFail
-                        self.pushAndCloseCtrl(ctrl)
-                        
-                    }
-                }
-            }
-        } else {
-            print("设备不支持 Face ID：\(error?.localizedDescription ?? "")")
-            showLocationPermissionAlert()
+        let bigtime:String = getCurrentTimeString()
+        let smalltime:String = getCurrentTimeString(dateFormat: "MM.dd HH:mm")
+        
+        var model:TransferModel?
+        var partner:TransferPartner = TransferPartner()
+        
+        let serialNumber:String = generateRandom16DigitString()
+        
+        if self.oldModel != nil {
+            
+            partner = self.oldModel!
+            
+            model = TransferModel(
+                ["amount": self.moneyField?.text ?? "", "remind": self.remindField!.text ?? "转账",
+                 "payBank": self.payCard.bank,"payCard": self.payCard.card,
+                 "bigtime":bigtime,"smalltime":smalltime,"serialNumber":serialNumber,"partner":partner,"tradeType":TransactionChildType.typeTransfer200.type,"calculatedBalance":balance]
+            )
+        }else{
+            
+            let lastCard:String = String((self.cardField!.text!.replacingOccurrences(of: " ", with: "")).suffix(4))
+            
+            partner = TransferPartner(
+                ["name": self.nameField?.text ?? "","card":self.cardField!.text!,
+                 "icon": self.banktype,"lastCard": lastCard,
+                 "bankName": self.banklb.text ?? "", "cardName": self.cardName,
+                 "cardType": self.cardType]
+            )
+            
+            model = TransferModel(
+                ["amount": self.moneyField?.text ?? "", "remind": self.remindField!.text ?? "转账",
+                 "payBank": self.payCard.bank,"payCard": self.payCard.card,
+                 "bigtime":bigtime,"smalltime":smalltime,"serialNumber":serialNumber,"partner":partner,"tradeType":TransactionChildType.typeTransfer200.type,"calculatedBalance":balance]
+            )
         }
-    }
-    
-    func showLocationPermissionAlert() {
-        // 创建 alert controller
-        let alert = UIAlertController(
-            title: "需要开启人脸识别",
-            message: "人脸识别用于支付验证以及个人信息查看",
-            preferredStyle: .alert
-        )
         
-        // 取消按钮
-        let cancelAction = UIAlertAction(
-            title: "取消",
-            style: .cancel
-        )
-        alert.addAction(cancelAction)
         
-        // 确定按钮 - 打开设置
-        let settingsAction = UIAlertAction(
-            title: "确认",
-            style: .default
-        ) { [weak self] _ in
-            self?.openAppSettings()
-        }
-        alert.addAction(settingsAction)
-        
-        // 显示 alert
-        self.navigationController?.present(alert, animated: true)
-    }
-
-    private func openAppSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:]) { success in
-                print("打开设置: \(success ? "成功" : "失败")")
-            }
-        }
+        let ctrl:TransferSubmit = TransferSubmit()
+        ctrl.model = model
+        ctrl.balance = balance
+        self.navigationController?.pushViewController(ctrl, animated: true)
     }
     
     //MARK: - 付款框
@@ -514,7 +331,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             make.centerY.equalTo(balancelb)
         }
         
-        let allbtn:UIButton = creatButton(CGRect.zero, " 全部转出 ", fontRegular(14), HXColor(0x2d70ed), .clear, self, #selector(transferOut))
+        let allbtn:UIButton = creatButton(CGRect.zero, " 全部转出 ", fontRegular(14), blueColor, .clear, self, #selector(transferOut))
         topView.addSubview(allbtn)
         
         allbtn.snp.makeConstraints { make in
@@ -607,7 +424,7 @@ class TradeCtrl: BaseCtrl,UIScrollViewDelegate,UITextFieldDelegate,UIGestureReco
             
             if i < titles.count - 1 {
                 rightimg.image = UIImage(named: images[i])?.withRenderingMode(.alwaysTemplate)
-                rightimg.tintColor = HXColor(0x2d70ed)
+                rightimg.tintColor = blueColor
                 
                 rightimg.snp.makeConstraints { make in
                     make.right.equalToSuperview().offset(-15)

@@ -77,7 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                     
                     bankList = (jsonObject["bankList"] as? [[String: Any]] ?? [])
                     hotBank = (jsonObject["hotBank"] as? [[String: Any]] ?? [])
-                    bankSection = bankBuildSectionData(bankList: bankList, commonList: hotBank)
+                    let result = bankBuildSectionData(bankList: bankList, commonList: hotBank)
+                    bankSection = result.data
+                    letterSection = result.sections
                 } else {
                     print("❌ JSON 不是字典格式")
                 }

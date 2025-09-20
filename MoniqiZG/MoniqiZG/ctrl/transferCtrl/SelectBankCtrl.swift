@@ -8,26 +8,14 @@
 import UIKit
 import CoreLocation
 import SnapKit
-import RxSwift
-import RxCocoa
 
-class SelectBankCtrl: BaseCtrl {
+class SelectBankCtrl: BaseCtrl,UITableViewDelegate,UITableViewDataSource,IndexViewDelegate {
     
     var onTap: ((Dictionary<String,Any>) -> Void)?
-    
+    var isPhone:Bool = false
     private var didSetupCorner = false
     let cardImageV:UIImageView = UIImageView()
-    
-    private let disposeBag = DisposeBag()
-    
-    private let CardTable = UITableView(frame: CGRect.zero, style: .grouped)
-    private let CardDatas = BehaviorRelay<[Dictionary<String,Any>]>(value: [])
-    
-//    private var displayedData: [[String: Any]] = [] // 当前显示的数据
-//    private let batchSize = 20 // 每次加载的数据量
-//    private var currentIndex = 0 // 当前加载到的索引
-    
-    
+    private let CardTable = UITableView(frame: CGRect.zero, style: .plain)
     private var listArray:Array<Dictionary<String,Any>> = []
     
     override func viewDidLoad() {
@@ -39,10 +27,7 @@ class SelectBankCtrl: BaseCtrl {
 
     override func setupUI() {
         super.setupUI()
-        
         addView()
-        
-//        loadInitialData()
     }
     
     func addHeadView(){
@@ -62,7 +47,6 @@ class SelectBankCtrl: BaseCtrl {
             make.bottom.equalToSuperview().offset(-15)
             make.width.height.equalTo(24)
         }
-        
         
         let leftButton:UIButton = UIButton()
         leftButton.backgroundColor = .clear
@@ -86,16 +70,17 @@ class SelectBankCtrl: BaseCtrl {
     }
     
     func addView(){
-        let img:UIImage = UIImage(named:"transfer_field") ?? UIImage()
+        //
+        let img:UIImage = UIImage(named:isPhone ? "transfer_field_phone" : "transfer_field") ?? UIImage()
         
-        let high:CGFloat = img.size.height/img.size.width * (SCREEN_WDITH - 30)
+        let high:CGFloat = img.size.height/img.size.width * (isPhone ? SCREEN_WDITH : (SCREEN_WDITH - 30))
         
         let headimg:UIImageView = UIImageView()
         headimg.image = img
         contentView.addSubview(headimg)
         
         headimg.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(15)
+            make.left.right.equalToSuperview().inset(isPhone ? 0 : 15)
             make.top.equalToSuperview().offset(navigationHeight+2)
             make.height.equalTo(high)
         }
@@ -105,9 +90,17 @@ class SelectBankCtrl: BaseCtrl {
         CardTable.backgroundColor = .white
         CardTable.rowHeight = 50 // 设置固定高度
         CardTable.sectionHeaderHeight = 35
-        CardTable.sectionFooterHeight = 0
+        CardTable.sectionFooterHeight = 0.1
+        CardTable.delegate = self
+        CardTable.dataSource = self
         view.addSubview(CardTable)
-
+        //禁用自动调整（推荐）
+        CardTable.contentInsetAdjustmentBehavior = .never
+        CardTable.contentInset = UIEdgeInsets.zero
+        // iOS 15+ 需要设置这个来移除 section header 顶部间距
+        if #available(iOS 15.0, *) {
+            CardTable.sectionHeaderTopPadding = 0
+        }
         CardTable.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(headimg.snp.bottom).offset(10)
@@ -115,32 +108,18 @@ class SelectBankCtrl: BaseCtrl {
         }
         CardTable.backgroundColor = .white
         
+        let indexView = IndexView(titles: letterSection)
+        indexView.delegate = self
+        view.addSubview(indexView)
         
-        // 先绑定数据源
-        CardDatas
-            .bind(to: CardTable.rx.items(cellIdentifier: "BankCell", cellType: BankCell.self)) { index, model, cell in
-                cell.addData(_data: model)
-            }
-            .disposed(by: disposeBag)
+        indexView.snp.makeConstraints { make in
+            make.centerY.equalTo(CardTable)
+            make.right.equalToSuperview()
+            make.width.equalTo(36)
+            make.height.equalTo(18 * letterSection.count)
+        }
         
-        // 监听滚动事件，实现无限滚动
-//        CardTable.rx.didScroll
-//            .subscribe(onNext: { [weak self] in
-//                self?.checkForMoreData()
-//            })
-//            .disposed(by: disposeBag)
-        
-        Observable.zip(CardTable.rx.itemSelected, CardTable.rx.modelSelected([String:Any].self))
-            .subscribe(onNext: { [weak self] indexPath, model in
-                self?.CardTable.deselectRow(at: indexPath, animated: true)
-                print("转账: \(model)")
-                if self?.onTap != nil {
-                    self?.onTap!(model)
-                }
-                self?.navigationController?.popViewController(animated: true)
-            })
-            .disposed(by: disposeBag)
-        
+        ViewRadius(headimg, 4)
     }
     
     
@@ -151,37 +130,58 @@ class SelectBankCtrl: BaseCtrl {
         didSetupCorner = true
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return bankSection[section].count
+    }
     
-    // MARK: - 工具方法：按拼音首字母分组
-    func groupPartnersByInitial(_ partners: [TransferPartner]) -> [PartnerSection] {
-        func pinyinFirstLetter(_ str: String) -> String {
-            let mutableString = NSMutableString(string: str) as CFMutableString
-            CFStringTransform(mutableString, nil, kCFStringTransformToLatin, false)
-            CFStringTransform(mutableString, nil, kCFStringTransformStripCombiningMarks, false)
-            let pinyin = mutableString as String
-            let first = pinyin.trimmingCharacters(in: .whitespaces).uppercased().first ?? "#"
-            return String(first)
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return bankSection.count
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return letterSection[section]
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let dic:[String: Any] = bankSection[indexPath.section][indexPath.row]
+        if self.onTap != nil {
+            self.onTap!(dic)
         }
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let dic:[String: Any] = bankSection[indexPath.section][indexPath.row]
         
-        var dict: [String: [TransferPartner]] = [:]
-        for p in partners {
-            let initial = pinyinFirstLetter(p.name)
-            if initial >= "A" && initial <= "Z" {
-                dict[initial, default: []].append(p)
-            } else {
-                dict["#", default: []].append(p)
-            }
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BankCell", for: indexPath) as! BankCell
+        cell.addData(_data: dic)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let container = UIView()
+        container.backgroundColor = Main_backgroundColor
         
-        // 按字母顺序排序，# 放最后
-        let keys = dict.keys.sorted { lhs, rhs in
-            if lhs == "#" { return false }
-            if rhs == "#" { return true }
-            return lhs < rhs
-        }
+        let title:String = letterSection[section]
+        let lb:UILabel = creatLabel(CGRect(x: 15, y: 10, width: SCREEN_WDITH - 30, height: 15), title, fontRegular(14), Main_TextColor)
+        container.addSubview(lb)
+
+        return container;
+    }
+    
+    func indexView(_ indexView: IndexView, didSelect index: Int, title: String) {
+        print("选中了 \(title) at index: \(index)")
         
-        return keys.map { key in
-            PartnerSection(header: key, items: dict[key] ?? [])
+        guard index < bankSection.count else { return }
+        let section = index
+        
+        if bankSection[section].isEmpty {
+            // 如果该 section 没有内容，可以选择滚动到 header
+            let rect = CardTable.rectForHeader(inSection: index)
+            CardTable.scrollRectToVisible(rect, animated: true)
+        } else {
+            // 滚动到该 section 的第一行
+            CardTable.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
         }
     }
 }
@@ -190,6 +190,7 @@ class SelectBankCtrl: BaseCtrl {
 class BankCell: UITableViewCell {
     let icon = UIImageView()
     let titlelb = UILabel()
+    let otherlb = UILabel()
     var model:Dictionary<String,Any>?
     
     required init?(coder aDecoder: NSCoder) {
@@ -211,13 +212,20 @@ class BankCell: UITableViewCell {
         line.backgroundColor = defaultLineColor
         contentView.addSubview(line)
         
-        titlelb.font = fontRegular(16)
+        titlelb.font = fontRegular(15)
         titlelb.textColor = Main_TextColor
         contentView.addSubview(titlelb)
         
+        otherlb.font = fontRegular(10)
+        otherlb.textColor = .white
+        otherlb.text = "其他"
+        otherlb.textAlignment = .center
+        otherlb.backgroundColor = HXColor(0x0066ef)
+        contentView.addSubview(otherlb)
+        
         icon.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(24)
+            make.width.height.equalTo(26)
             make.left.equalToSuperview().offset(15)
         }
         
@@ -228,20 +236,35 @@ class BankCell: UITableViewCell {
             make.centerY.equalToSuperview()
         }
         
+        otherlb.snp.makeConstraints { make in
+            make.edges.equalTo(icon)
+        }
+        
         line.snp.makeConstraints { make in
             make.bottom.right.equalToSuperview()
             make.left.equalToSuperview().offset(15)
             make.height.equalTo(1)
         }
+        
+        ViewRadius(otherlb, 13)
+        otherlb.isHidden = true
     }
 
     
     func addData(_data:Dictionary<String,Any>,_isbig:Bool = true) {
         model = _data
-         
         titlelb.text = _data["bankName"] as? String
         
-        icon.image = UIImage(named: "bank_type_\(_data["cardIconInt"] ?? "")") ?? UIImage()
+        let img = UIImage(named: "bank_type_\(_data["cardIconInt"] ?? "")")
+        if img != nil {
+            icon.image = img
+            
+            icon.isHidden = false
+            otherlb.isHidden = true
+        }else{
+            icon.isHidden = true
+            otherlb.isHidden = false
+        }
     }
     
     override func awakeFromNib() {

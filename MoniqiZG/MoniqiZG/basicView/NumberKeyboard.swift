@@ -97,7 +97,7 @@ class NumberKeyboard: UIView {
                 make.height.equalTo(btnHigh)
             }
             
-            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, HXColor(0x2d70ed), self, #selector(sureKeyboard))
+            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, blueColor, self, #selector(sureKeyboard))
             addSubview(sureBtn)
 
             sureBtn.snp.makeConstraints { make in
@@ -139,7 +139,7 @@ class NumberKeyboard: UIView {
                 make.height.equalTo(high)
             }
             
-            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, HXColor(0x2d70ed), self, #selector(sureKeyboard))
+            let sureBtn:UIButton = creatButton(CGRect.zero, "确认", fontSemibold(24), .white, blueColor, self, #selector(sureKeyboard))
             addSubview(sureBtn)
 
             sureBtn.snp.makeConstraints { make in
